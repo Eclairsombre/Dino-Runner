@@ -7,8 +7,7 @@ using namespace std;
 #include <cstdio>
 #include <SDL2/SDL_mixer.h>
 #include "SDL2/SDL_image.h"
-#include "player.cpp"
-#include "monster.cpp"
+#include "dino.cpp"
 #include "map.cpp"
 
 int main()
@@ -40,34 +39,25 @@ int main()
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
     bool close = false;
+    bool up = false, down = false, space = false;
 
-    player p;
-    InitPlayer(p);
+    dino d;
+    InitialiseDino(d);
 
-    monster m;
-
-    map ma;
-    InitMap(ma);
-
-    string direction;
-    InitMonster(m);
-    bool up = false, down = false, right = false, left = false;
-    
-    
-
+    map m;
+    initialiseMap(m);
     SDL_Event event;
     while (!close)
     {
-        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+
+        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+
         SDL_RenderClear(rend);
 
-        //DrawMap(ma, rend);
+        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
+        SDL_RenderFillRect(rend, &d.hitbox);
 
-        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
-        SDL_RenderDrawRect(rend, &p.PlayerRect);
-
-        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
-        SDL_RenderDrawRect(rend, &m.MonsterRect);
+        afficherMap(m, rend);
 
         while (SDL_PollEvent(&event))
         {
@@ -87,56 +77,24 @@ int main()
                 case SDL_SCANCODE_DOWN:
                     down = true;
                     break;
-                case SDL_SCANCODE_LEFT:
-                    left = true;
+                case SDL_SCANCODE_SPACE:
+                    space = true;
                     break;
-                case SDL_SCANCODE_RIGHT:
-                    right = true;
-                    break;
-                default:
-                    break;
-                }
-                break;
-            case SDL_KEYUP:
-                switch (event.key.keysym.scancode)
-                {
-                case SDL_SCANCODE_UP:
-                    up = false;
-                    break;
-                case SDL_SCANCODE_DOWN:
-                    down = false;
-                    break;
-                case SDL_SCANCODE_LEFT:
-                    left = false;
-                    break;
-                case SDL_SCANCODE_RIGHT:
-                    right = false;
-                    break;
+
                 default:
                     break;
                 }
                 break;
             }
         }
-
         if (up == true)
         {
-            p.PlayerRect.y -= 3;
+            d.hitbox.y -= 3;
         }
         if (down == true)
         {
-            p.PlayerRect.y += 3;
+            d.hitbox.y += 3;
         }
-        if (right == true)
-        {
-            p.PlayerRect.x += 3;
-        }
-        if (left == true)
-        {
-            p.PlayerRect.x -= 3;
-        }
-
-        //MonsterWalk(m, direction);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);

@@ -1,9 +1,9 @@
 #include <SDL2/SDL.h>
-class map
+
+class dino
 {
 private:
     /* data */
 public:
-    SDL_Rect elt[100];
-    int indice;
+    SDL_Rect hitbox;
 };
