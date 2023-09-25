@@ -162,7 +162,7 @@ int main()
 
         if (space == true)
         {
-            if (x <= 180)
+            if (x <= 200)
             {
                 jump(d, x);
                 x += 5;
@@ -174,6 +174,8 @@ int main()
             }
         }
         gravity(d, space);
+
+        actualiserMap(m);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);

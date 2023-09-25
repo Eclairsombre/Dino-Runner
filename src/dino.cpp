@@ -14,19 +14,19 @@ void jump(dino &d, int &x)
 {
     if (d.sens.compare("haut") == 0)
     {
-        if (x < 90)
+        if (x < 100)
         {
-            d.hitbox.y -= 5;
+            d.hitbox.y -= 7;
         }
         else
         {
-            if (d.hitbox.y + 5 < 450)
+            if (d.hitbox.y + 7 < 450)
             {
-                d.hitbox.y += 5;
+                d.hitbox.y += 7;
             }
             else
             {
-                x = 180;
+                x = 200;
             }
         }
     }
@@ -34,13 +34,13 @@ void jump(dino &d, int &x)
     {
         if (x < 90)
         {
-            d.hitbox.y += 5;
+            d.hitbox.y += 7;
         }
         else
         {
-            if (d.hitbox.y - 5 > 540)
+            if (d.hitbox.y - 7 > 540)
             {
-                d.hitbox.y -= 5;
+                d.hitbox.y -= 7;
             }
             else
             {
