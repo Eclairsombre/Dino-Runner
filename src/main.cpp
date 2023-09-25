@@ -173,7 +173,7 @@ int main()
                 x = 0;
             }
         }
-        gravite(d, space);
+        gravity(d, space);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);

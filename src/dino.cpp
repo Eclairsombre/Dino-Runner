@@ -50,7 +50,7 @@ void jump(dino &d, int &x)
     }
 }
 
-void gravite(dino &d, bool space)
+void gravity(dino &d, bool space)
 {
     if (d.sens.compare("haut") == 0)
     {
