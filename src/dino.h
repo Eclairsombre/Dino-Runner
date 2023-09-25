@@ -6,4 +6,5 @@ private:
     /* data */
 public:
     SDL_Rect hitbox;
+    string sens;
 };

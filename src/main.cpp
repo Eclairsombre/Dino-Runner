@@ -39,8 +39,9 @@ int main()
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
     bool close = false;
-    bool up = false, down = false, space = false;
+    bool up = false, down = false, space = false, temp = false;
 
+    int x = 0;
     dino d;
     InitialiseDino(d);
 
@@ -85,16 +86,94 @@ int main()
                     break;
                 }
                 break;
+            case SDL_KEYUP:
+                switch (event.key.keysym.scancode)
+                {
+                case SDL_SCANCODE_UP:
+                    up = false;
+                    break;
+                case SDL_SCANCODE_DOWN:
+                    down = false;
+                    d.hitbox.h = 60;
+                    if (d.sens.compare("haut") == 0)
+                    {
+                        d.hitbox.y -= 30;
+                        temp = false;
+                    }
+                    break;
+
+                default:
+                    break;
+                }
+                break;
             }
         }
-        if (up == true)
+        if (up == true && space == false)
         {
-            d.hitbox.y -= 3;
+            if (d.sens.compare("haut") == 0)
+            {
+                d.sens = "bas";
+                d.hitbox.y += 160;
+                up = false;
+            }
+            else if (d.sens.compare("bas") == 0)
+            {
+                d.sens = "haut";
+                d.hitbox.y -= 160;
+                up = false;
+            }
         }
         if (down == true)
         {
-            d.hitbox.y += 3;
+
+            if (d.sens.compare("haut") == 0 && temp == false)
+            {
+                if (space == false)
+
+                {
+                    d.hitbox.h = 30;
+                    d.hitbox.y += 30;
+                    temp = true;
+                }
+                else
+                {
+                    d.hitbox.h = 30;
+                    d.hitbox.y = 470;
+                    temp = true;
+                    space = false;
+                    x = 0;
+                }
+            }
+            else if (d.sens.compare("bas") == 0)
+            {
+                if (space == false)
+                {
+                    d.hitbox.h = 30;
+                }
+                else
+                {
+                    d.hitbox.h = 30;
+                    d.hitbox.y = 600;
+                    space = false;
+                    x = 0;
+                }
+            }
         }
+
+        if (space == true)
+        {
+            if (x <= 180)
+            {
+                jump(d, x);
+                x += 5;
+            }
+            else
+            {
+                space = false;
+                x = 0;
+            }
+        }
+        gravite(d, space);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
