@@ -28,17 +28,24 @@ void initialiseMap(map &m)
     SDL_Rect oiseau;
     oiseau.h = 30;
     oiseau.w = 30;
-    oiseau.x = 500;
-    oiseau.y = 410;
+    oiseau.x = 1100;
+    oiseau.y = 420;
 
     SDL_Rect cactus;
     cactus.h = 40;
     cactus.w = 30;
-    cactus.x = 500;
+    cactus.x = 1100;
     cactus.y = 470;
+
+    SDL_Rect doubleCactus;
+    doubleCactus.h = 40;
+    doubleCactus.w = 60;
+    doubleCactus.x = 1100;
+    doubleCactus.y = 470;
 
     m.obstacles[0] = oiseau;
     m.obstacles[1] = cactus;
+    m.obstacles[2] = doubleCactus;
 }
 
 void afficherMap(map &m, SDL_Renderer *rend)
@@ -53,7 +60,7 @@ void afficherMap(map &m, SDL_Renderer *rend)
 void actualiserMap(map &m)
 {
     long time = SDL_GetTicks();
-    int nb = rand() % 2;
+    int nb = rand() % 3;
 
     if ((time / 1000) % 3 == 0 && m.spawn == true)
     {
@@ -70,6 +77,11 @@ void actualiserMap(map &m)
         case 1:
             m.indice += 1;
             m.elt[m.indice] = m.obstacles[1];
+            break;
+
+        case 2:
+            m.indice += 1;
+            m.elt[m.indice] = m.obstacles[2];
             break;
 
         default:

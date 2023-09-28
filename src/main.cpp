@@ -162,7 +162,7 @@ int main()
 
         if (space == true)
         {
-            if (x <= 200)
+            if (x <= 220)
             {
                 jump(d, x);
                 x += 5;
