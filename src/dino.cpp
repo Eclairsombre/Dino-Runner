@@ -6,7 +6,7 @@ dino::dino()
     a.h = 80;
     a.w = 60;
     a.x = 100;
-    a.y = 440;
+    a.y = 420;
 
     this->hitbox = a;
     this->sens = "haut";
@@ -55,7 +55,7 @@ void dino::moveDino(SDL_Event &event, map &m)
                 down = true;
                 break;
             case SDL_SCANCODE_SPACE:
-
+                jump = true;
                 break;
 
             default:
@@ -70,12 +70,6 @@ void dino::moveDino(SDL_Event &event, map &m)
                 break;
             case SDL_SCANCODE_DOWN:
                 down = false;
-                /*d.hitbox.h = 60;
-                if (d.sens.compare("haut") == 0)
-                {
-                    d.hitbox.y -= 30;
-                    temp = false;
-                }*/
                 break;
 
             default:
@@ -87,4 +81,27 @@ void dino::moveDino(SDL_Event &event, map &m)
 }
 void dino::Gravity()
 {
+    if (jump == true)
+    {
+        if (this->hitbox.y > 300 && goUp == true)
+        {
+
+            vy -= g;
+        }
+        else if (this->hitbox.y < 300)
+        {
+            goUp = false;
+            vy += g;
+        }
+    }
+
+    if (this->hitbox.y + vy > 420)
+    {
+        this->hitbox.y = 420;
+        vy = 0;
+        jump = false;
+        goUp = true;
+    }
+
+    this->hitbox.y += this->vy;
 }

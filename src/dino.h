@@ -9,7 +9,8 @@ class dino
 private:
     SDL_Rect hitbox;
     string sens;
-    bool up = false, down = false, right = false, left = false;
+    bool up = false, down = false, jump = false, goUp = true;
+    int vy = 0, g = 3;
     /* data */
 public:
     dino();

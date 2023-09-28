@@ -45,6 +45,11 @@ int main()
     int x = 0;
     dino d;
 
+    SDL_Rect sol;
+    sol.h = 60;
+    sol.w = 1000;
+    sol.x = 0;
+    sol.y = 500;
     map m;
 
     SDL_Event event;
@@ -54,6 +59,9 @@ int main()
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 
         SDL_RenderClear(rend);
+
+        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+        SDL_RenderFillRect(rend, &sol);
 
         d.show(rend);
 
@@ -128,6 +136,7 @@ int main()
          */
 
         d.moveDino(event, m);
+        d.Gravity();
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
