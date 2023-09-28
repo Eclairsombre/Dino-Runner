@@ -8,8 +8,9 @@ using namespace std;
 #include <SDL2/SDL_mixer.h>
 #include "SDL2/SDL_image.h"
 #include "dino.cpp"
-#include "map.cpp"
 
+/// @brief
+/// @return
 int main()
 {
 
@@ -43,139 +44,90 @@ int main()
 
     int x = 0;
     dino d;
-    InitialiseDino(d);
 
     map m;
-    initialiseMap(m);
+
     SDL_Event event;
-    while (!close)
+    while (m.getClose() == false)
     {
 
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 
         SDL_RenderClear(rend);
 
-        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-        SDL_RenderFillRect(rend, &d.hitbox);
+        d.show(rend);
 
-        afficherMap(m, rend);
+        // afficherMap(m, rend);
 
-        while (SDL_PollEvent(&event))
-        {
+        /*
+         if (up == true && space == false)
+         {
+             if (d.sens.compare("haut") == 0)
+             {
+                 d.sens = "bas";
+                 d.hitbox.y += 160;
+                 up = false;
+             }
+             else if (d.sens.compare("bas") == 0)
+             {
+                 d.sens = "haut";
+                 d.hitbox.y -= 160;
+                 up = false;
+             }
+         }
+         if (down == true)
+         {
 
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                // Quit
-                close = true;
-                break;
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.scancode)
-                {
-                case SDL_SCANCODE_UP:
-                    up = true;
-                    break;
-                case SDL_SCANCODE_DOWN:
-                    down = true;
-                    break;
-                case SDL_SCANCODE_SPACE:
-                    space = true;
-                    break;
+             if (d.sens.compare("haut") == 0 && temp == false)
+             {
+                 if (space == false)
 
-                default:
-                    break;
-                }
-                break;
-            case SDL_KEYUP:
-                switch (event.key.keysym.scancode)
-                {
-                case SDL_SCANCODE_UP:
-                    up = false;
-                    break;
-                case SDL_SCANCODE_DOWN:
-                    down = false;
-                    d.hitbox.h = 60;
-                    if (d.sens.compare("haut") == 0)
-                    {
-                        d.hitbox.y -= 30;
-                        temp = false;
-                    }
-                    break;
+                 {
+                     d.hitbox.h = 30;
+                     d.hitbox.y += 30;
+                     temp = true;
+                 }
+                 else
+                 {
+                     d.hitbox.h = 30;
+                     d.hitbox.y = 470;
+                     temp = true;
+                     space = false;
+                     x = 0;
+                 }
+             }
+             else if (d.sens.compare("bas") == 0)
+             {
+                 if (space == false)
+                 {
+                     d.hitbox.h = 30;
+                 }
+                 else
+                 {
+                     d.hitbox.h = 30;
+                     d.hitbox.y = 600;
+                     space = false;
+                     x = 0;
+                 }
+             }
+         }
 
-                default:
-                    break;
-                }
-                break;
-            }
-        }
-        if (up == true && space == false)
-        {
-            if (d.sens.compare("haut") == 0)
-            {
-                d.sens = "bas";
-                d.hitbox.y += 160;
-                up = false;
-            }
-            else if (d.sens.compare("bas") == 0)
-            {
-                d.sens = "haut";
-                d.hitbox.y -= 160;
-                up = false;
-            }
-        }
-        if (down == true)
-        {
+         if (space == true)
+         {
+             if (x <= 220)
+             {
+                 jump(d, x);
+                 x += 5;
+             }
+             else
+             {
+                 space = false;
+                 x = 0;
+             }
+         }
+         */
 
-            if (d.sens.compare("haut") == 0 && temp == false)
-            {
-                if (space == false)
-
-                {
-                    d.hitbox.h = 30;
-                    d.hitbox.y += 30;
-                    temp = true;
-                }
-                else
-                {
-                    d.hitbox.h = 30;
-                    d.hitbox.y = 470;
-                    temp = true;
-                    space = false;
-                    x = 0;
-                }
-            }
-            else if (d.sens.compare("bas") == 0)
-            {
-                if (space == false)
-                {
-                    d.hitbox.h = 30;
-                }
-                else
-                {
-                    d.hitbox.h = 30;
-                    d.hitbox.y = 600;
-                    space = false;
-                    x = 0;
-                }
-            }
-        }
-
-        if (space == true)
-        {
-            if (x <= 220)
-            {
-                jump(d, x);
-                x += 5;
-            }
-            else
-            {
-                space = false;
-                x = 0;
-            }
-        }
-        gravity(d, space);
-
-        actualiserMap(m);
+        d.moveDino(event, m);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);

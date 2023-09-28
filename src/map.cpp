@@ -2,6 +2,24 @@
 #include <iostream>
 using namespace std;
 
+map::map(/* args */)
+{
+    this->close = false;
+}
+
+map::~map()
+{
+}
+
+bool map::getClose()
+{
+    return this->close;
+}
+void map::setClose()
+{
+    this->close = true;
+}
+
 void sup_case(int i, int &indice, SDL_Rect elt[100])
 {
     // Supprime une case d'un tab de block
@@ -11,6 +29,7 @@ void sup_case(int i, int &indice, SDL_Rect elt[100])
     }
 }
 
+/*
 void initialiseMap(map &m)
 {
 
@@ -107,3 +126,5 @@ void actualiserMap(map &m)
         m.spawn = true;
     }
 }
+
+*/
