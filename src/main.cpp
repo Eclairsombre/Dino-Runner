@@ -39,17 +39,8 @@ int main()
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
-    bool close = false;
-    bool up = false, down = false, space = false, temp = false;
-
-    int x = 0;
     dino d;
 
-    SDL_Rect sol;
-    sol.h = 60;
-    sol.w = 1000;
-    sol.x = 0;
-    sol.y = 500;
     map m;
 
     SDL_Event event;
@@ -60,83 +51,17 @@ int main()
 
         SDL_RenderClear(rend);
 
-        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-        SDL_RenderFillRect(rend, &sol);
-
         d.show(rend);
 
-        // afficherMap(m, rend);
-
-        /*
-         if (up == true && space == false)
-         {
-             if (d.sens.compare("haut") == 0)
-             {
-                 d.sens = "bas";
-                 d.hitbox.y += 160;
-                 up = false;
-             }
-             else if (d.sens.compare("bas") == 0)
-             {
-                 d.sens = "haut";
-                 d.hitbox.y -= 160;
-                 up = false;
-             }
-         }
-         if (down == true)
-         {
-
-             if (d.sens.compare("haut") == 0 && temp == false)
-             {
-                 if (space == false)
-
-                 {
-                     d.hitbox.h = 30;
-                     d.hitbox.y += 30;
-                     temp = true;
-                 }
-                 else
-                 {
-                     d.hitbox.h = 30;
-                     d.hitbox.y = 470;
-                     temp = true;
-                     space = false;
-                     x = 0;
-                 }
-             }
-             else if (d.sens.compare("bas") == 0)
-             {
-                 if (space == false)
-                 {
-                     d.hitbox.h = 30;
-                 }
-                 else
-                 {
-                     d.hitbox.h = 30;
-                     d.hitbox.y = 600;
-                     space = false;
-                     x = 0;
-                 }
-             }
-         }
-
-         if (space == true)
-         {
-             if (x <= 220)
-             {
-                 jump(d, x);
-                 x += 5;
-             }
-             else
-             {
-                 space = false;
-                 x = 0;
-             }
-         }
-         */
+        m.show(rend);
 
         d.moveDino(event, m);
+
         d.Gravity();
+
+        m.addObstacle();
+
+        m.moveObstacle();
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);

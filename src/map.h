@@ -3,21 +3,25 @@
 #define MAP
 
 #include <SDL2/SDL.h>
+#include <vector>
 
 class map
 {
 private:
-    SDL_Rect elt[100];
-    SDL_Rect obstacles[100];
-    int indice;
-
-    bool spawn, close;
+    SDL_Rect sol, oiseau, cactus;
+    vector<SDL_Rect> obstacles;
+    int vx, spawnRate;
+    long timer;
+    bool spawn = true, close;
 
 public:
     map(/* args */);
     ~map();
     bool getClose();
     void setClose();
+    void show(SDL_Renderer *rend);
+    void addObstacle();
+    void moveObstacle();
 };
 
 #endif

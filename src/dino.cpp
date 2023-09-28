@@ -9,7 +9,7 @@ dino::dino()
     a.y = 420;
 
     this->hitbox = a;
-    this->sens = "haut";
+    this->sens = new string("up");
 }
 
 dino::~dino()
@@ -23,7 +23,7 @@ SDL_Rect dino::getHitbox()
 
 string dino::getSens()
 {
-    return this->sens;
+    return *this->sens;
 }
 
 void dino::show(SDL_Renderer *rend)
@@ -50,6 +50,7 @@ void dino::moveDino(SDL_Event &event, map &m)
             {
             case SDL_SCANCODE_UP:
                 up = true;
+                this->changeSens();
                 break;
             case SDL_SCANCODE_DOWN:
                 down = true;
@@ -67,6 +68,7 @@ void dino::moveDino(SDL_Event &event, map &m)
             {
             case SDL_SCANCODE_UP:
                 up = false;
+
                 break;
             case SDL_SCANCODE_DOWN:
                 down = false;
@@ -81,27 +83,77 @@ void dino::moveDino(SDL_Event &event, map &m)
 }
 void dino::Gravity()
 {
-    if (jump == true)
+    string temp = this->getSens();
+    if (temp == "up")
     {
-        if (this->hitbox.y > 300 && goUp == true)
+        if (jump == true)
         {
+            if (this->hitbox.y > 300 && goUp == true)
+            {
 
-            vy -= g;
+                vy -= g;
+            }
+            else if (this->hitbox.y < 300)
+            {
+                goUp = false;
+                vy += g;
+            }
         }
-        else if (this->hitbox.y < 300)
+
+        if (this->hitbox.y + vy > 420)
         {
-            goUp = false;
-            vy += g;
+            this->hitbox.y = 420;
+            vy = 0;
+            jump = false;
+            goUp = true;
         }
+
+        this->hitbox.y += this->vy;
     }
-
-    if (this->hitbox.y + vy > 420)
+    else if (temp == "down")
     {
+        if (jump == true)
+        {
+            if (this->hitbox.y > 600 && goUp == true)
+            {
+
+                vy += g;
+            }
+            else if (this->hitbox.y < 600)
+            {
+                goUp = false;
+                vy -= g;
+            }
+        }
+
+        if (this->hitbox.y + vy < 500)
+        {
+            this->hitbox.y = 500;
+            vy = 0;
+            jump = false;
+            goUp = true;
+        }
+
+        this->hitbox.y += this->vy;
+    }
+}
+
+void dino::changeSens()
+{
+
+    if (this->getSens() == "up")
+    {
+        delete sens;
+        this->hitbox.y = 560;
+
+        this->sens = new string("down");
+    }
+    else if (this->getSens() == "down")
+    {
+        delete sens;
+
         this->hitbox.y = 420;
-        vy = 0;
-        jump = false;
-        goUp = true;
-    }
 
-    this->hitbox.y += this->vy;
+        this->sens = new string("up");
+    }
 }
