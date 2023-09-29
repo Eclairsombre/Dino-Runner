@@ -1,5 +1,19 @@
 #include "dino.h"
 
+bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)
+{
+    // Vérifie si les rectangles se chevauchent en utilisant les coordonnées de leurs coins.
+    if (rectA.x + rectA.w >= rectB.x && // Coin droit de A est à droite de B
+        rectA.x <= rectB.x + rectB.w && // Coin gauche de A est à gauche de B
+        rectA.y + rectA.h >= rectB.y && // Coin bas de A est en dessous de B
+        rectA.y <= rectB.y + rectB.h)   // Coin haut de A est au-dessus de B
+    {
+        // Les rectangles se chevauchent
+        return true;
+    }
+    // Aucune collision
+    return false;
+}
 dino::dino()
 {
     SDL_Rect a;
@@ -9,7 +23,6 @@ dino::dino()
     a.y = 420;
 
     this->hitbox = a;
-    this->sens = new string("up");
 }
 
 dino::~dino()
@@ -19,11 +32,6 @@ dino::~dino()
 SDL_Rect dino::getHitbox()
 {
     return this->hitbox;
-}
-
-string dino::getSens()
-{
-    return *this->sens;
 }
 
 void dino::show(SDL_Renderer *rend)
@@ -53,10 +61,18 @@ void dino::moveDino(SDL_Event &event, map &m)
                 this->changeSens();
                 break;
             case SDL_SCANCODE_DOWN:
-                down = true;
+                if (!this->jump)
+                {
+                    down = true;
+                    this->sneak();
+                }
+
                 break;
             case SDL_SCANCODE_SPACE:
-                jump = true;
+                if (!this->down)
+                {
+                    jump = true;
+                }
                 break;
 
             default:
@@ -71,7 +87,11 @@ void dino::moveDino(SDL_Event &event, map &m)
 
                 break;
             case SDL_SCANCODE_DOWN:
-                down = false;
+                if (!this->jump)
+                {
+                    down = false;
+                    this->sneak();
+                }
                 break;
 
             default:
@@ -83,12 +103,12 @@ void dino::moveDino(SDL_Event &event, map &m)
 }
 void dino::Gravity()
 {
-    string temp = this->getSens();
-    if (temp == "up")
+
+    if (this->hitbox.y <= 420)
     {
-        if (jump == true)
+        if (jump)
         {
-            if (this->hitbox.y > 300 && goUp == true)
+            if (this->hitbox.y > 300 && goUp)
             {
 
                 vy -= g;
@@ -110,25 +130,25 @@ void dino::Gravity()
 
         this->hitbox.y += this->vy;
     }
-    else if (temp == "down")
+    else if (this->hitbox.y >= 560)
     {
-        if (jump == true)
+        if (jump)
         {
-            if (this->hitbox.y > 600 && goUp == true)
+            if (this->hitbox.y < 680 && goUp)
             {
 
                 vy += g;
             }
-            else if (this->hitbox.y < 600)
+            else if (this->hitbox.y > 680)
             {
                 goUp = false;
                 vy -= g;
             }
         }
 
-        if (this->hitbox.y + vy < 500)
+        if (this->hitbox.y + vy < 560)
         {
-            this->hitbox.y = 500;
+            this->hitbox.y = 560;
             vy = 0;
             jump = false;
             goUp = true;
@@ -140,20 +160,67 @@ void dino::Gravity()
 
 void dino::changeSens()
 {
-
-    if (this->getSens() == "up")
+    if (!this->jump)
     {
-        delete sens;
-        this->hitbox.y = 560;
+        if (this->hitbox.y == 420)
+        {
 
-        this->sens = new string("down");
+            this->hitbox.y = 560;
+        }
+        else if (this->hitbox.y == 560)
+        {
+
+            this->hitbox.y = 420;
+        }
     }
-    else if (this->getSens() == "down")
+}
+
+void dino::sneak()
+{
+    if (!this->jump)
     {
-        delete sens;
+        if (this->hitbox.y <= 460)
+        {
 
-        this->hitbox.y = 420;
+            if (this->down && this->goSneak)
+            {
 
-        this->sens = new string("up");
+                this->goSneak = false;
+                this->hitbox.h = 40;
+                this->hitbox.y += 40;
+            }
+            else if (!this->down && !this->goSneak)
+            {
+                this->goSneak = true;
+                this->hitbox.h = 80;
+                this->hitbox.y -= 40;
+            }
+        }
+        else if (this->hitbox.y >= 500)
+        {
+
+            if (this->down && this->goSneak)
+            {
+
+                this->goSneak = false;
+                this->hitbox.h = 40;
+            }
+            else if (!this->down && !this->goSneak)
+            {
+                this->goSneak = true;
+                this->hitbox.h = 80;
+            }
+        }
+    }
+}
+
+void dino::collision(map &m)
+{
+    for (int i = 0; i < m.getObstacles().size(); i++)
+    {
+        if (checkCollision(this->hitbox, m.getObstacles()[i]))
+        {
+            m.setClose();
+        }
     }
 }

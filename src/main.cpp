@@ -63,9 +63,12 @@ int main()
 
         m.moveObstacle();
 
+        d.collision(m);
+
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
     }
+
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
 

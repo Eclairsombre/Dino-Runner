@@ -8,8 +8,8 @@ class dino
 {
 private:
     SDL_Rect hitbox;
-    string *sens;
-    bool up = false, down = false, jump = false, goUp = true;
+
+    bool up = false, down = false, jump = false, goUp = true, goSneak = true, stopSneak = false;
     int vy = 0, g = 2;
 
 public:
@@ -22,6 +22,8 @@ public:
     void Gravity();
     void moveDino(SDL_Event &event, map &m);
     void changeSens();
+    void sneak();
+    void collision(map &m);
 };
 
 #endif

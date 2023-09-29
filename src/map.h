@@ -22,6 +22,7 @@ public:
     void show(SDL_Renderer *rend);
     void addObstacle();
     void moveObstacle();
+    vector<SDL_Rect> getObstacles();
 };
 
 #endif
