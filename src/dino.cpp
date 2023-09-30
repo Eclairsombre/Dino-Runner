@@ -14,7 +14,29 @@ bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)
     // Aucune collision
     return false;
 }
-dino::dino()
+
+void dino::set_clips()
+{
+    // On coupe la feuille de sprite
+    for (int i = 0; i < 5; i++)
+    {
+        this->clips[i].x = 88 * i;
+        this->clips[i].y = 0;
+        this->clips[i].w = 88;
+        this->clips[i].h = 94;
+    }
+
+    this->clips[5].x = 547;
+    this->clips[5].y = 21;
+    this->clips[5].w = 191;
+    this->clips[5].h = 89;
+
+    this->clips[6].x = 736;
+    this->clips[6].y = 21;
+    this->clips[6].w = 172;
+    this->clips[6].h = 87;
+}
+dino::dino(SDL_Renderer *rend)
 {
     SDL_Rect a;
     a.h = 80;
@@ -22,11 +44,18 @@ dino::dino()
     a.x = 100;
     a.y = 420;
 
+    SDL_Surface *imageSurface = IMG_Load("./picture/spriteDino.png");
+    this->imageTexture = SDL_CreateTextureFromSurface(rend, imageSurface);
+    SDL_FreeSurface(imageSurface);
+
     this->hitbox = a;
+    this->set_clips();
 }
 
 dino::~dino()
 {
+    SDL_DestroyTexture(this->imageTexture);
+    delete this;
 }
 
 SDL_Rect dino::getHitbox()
@@ -38,7 +67,48 @@ void dino::show(SDL_Renderer *rend)
 {
 
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-    SDL_RenderFillRect(rend, &this->hitbox);
+
+    SDL_RenderCopy(rend, this->imageTexture, &this->currentClip, &this->hitbox);
+    // SDL_RenderFillRect(rend, &this->hitbox);}
+}
+
+void dino::chooseClip()
+{
+    if (this->jump)
+    {
+        this->currentClip = this->clips[0];
+    }
+    else
+    {
+        if (this->animation == 1)
+        {
+            if (!this->down)
+            {
+                this->currentClip = this->clips[2];
+            }
+            else
+            {
+                this->currentClip = this->clips[5];
+            }
+            this->animation = 2;
+        }
+        else if (this->animation == 10)
+        {
+            if (!this->down)
+            {
+                this->currentClip = this->clips[3];
+            }
+            else
+            {
+                this->currentClip = this->clips[6];
+            }
+            this->animation = 1;
+        }
+        else
+        {
+            this->animation++;
+        }
+    }
 }
 
 void dino::moveDino(SDL_Event &event, map &m)
@@ -51,6 +121,7 @@ void dino::moveDino(SDL_Event &event, map &m)
         {
         case SDL_QUIT:
             // Quit
+
             m.setClose();
             break;
         case SDL_KEYDOWN:
@@ -184,15 +255,19 @@ void dino::sneak()
 
             if (this->down && this->goSneak)
             {
+                this->chooseClip();
 
                 this->goSneak = false;
                 this->hitbox.h = 40;
+                this->hitbox.w = 80;
                 this->hitbox.y += 40;
             }
             else if (!this->down && !this->goSneak)
             {
+                this->chooseClip();
                 this->goSneak = true;
                 this->hitbox.h = 80;
+                this->hitbox.w = 60;
                 this->hitbox.y -= 40;
             }
         }
@@ -201,12 +276,14 @@ void dino::sneak()
 
             if (this->down && this->goSneak)
             {
+                this->chooseClip();
 
                 this->goSneak = false;
                 this->hitbox.h = 40;
             }
             else if (!this->down && !this->goSneak)
             {
+                this->chooseClip();
                 this->goSneak = true;
                 this->hitbox.h = 80;
             }
@@ -220,6 +297,7 @@ void dino::collision(map &m)
     {
         if (checkCollision(this->hitbox, m.getObstacles()[i]))
         {
+
             m.setClose();
         }
     }

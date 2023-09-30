@@ -11,6 +11,7 @@ using namespace std;
 
 /// @brief
 /// @return
+
 int main()
 {
 
@@ -39,7 +40,7 @@ int main()
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
-    dino d;
+    dino d(rend);
 
     map m;
 
@@ -63,12 +64,14 @@ int main()
 
         m.moveObstacle();
 
-        d.collision(m);
+        // d.collision(m);
+
+        d.chooseClip();
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
     }
-
+    d.~dino();
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
 

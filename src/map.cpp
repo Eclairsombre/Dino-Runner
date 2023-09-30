@@ -8,7 +8,7 @@ map::map(/* args */)
     s.h = 60;
     s.w = 1000;
     s.x = 0;
-    s.y = 500;
+    s.y = 495;
 
     SDL_Rect o;
     o.h = 30;
