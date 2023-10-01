@@ -42,36 +42,40 @@ int main()
 
     dino d(rend);
 
-    map m;
+    map m(rend);
+
+    bool stop = false;
 
     SDL_Event event;
-    while (m.getClose() == false)
+    while (!stop)
     {
 
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 
         SDL_RenderClear(rend);
 
+        d.chooseClip();
+
         d.show(rend);
 
         m.show(rend);
 
-        d.moveDino(event, m);
+        d.moveDino(event, m, stop);
 
         d.Gravity();
 
-        m.addObstacle();
+        m.addObstacle(rend);
 
         m.moveObstacle();
 
-        // d.collision(m);
+        m.chooseClip();
 
-        d.chooseClip();
+        // d.collision(m);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
     }
-    d.~dino();
+
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
 

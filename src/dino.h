@@ -14,18 +14,17 @@ private:
     int vy = 0, g = 2, animation = 2;
 
 public:
-    dino(SDL_Renderer *renderer);
+    dino(SDL_Renderer *rend);
     ~dino();
     SDL_Rect getHitbox();
 
-    string getSens();
     void show(SDL_Renderer *rend);
     void Gravity();
-    void moveDino(SDL_Event &event, map &m);
+    void moveDino(SDL_Event &event, map &m, bool &stop);
     void changeSens();
     void sneak();
     void collision(map &m);
-    void set_clips();
+    void set_clips(SDL_Renderer *rend);
     void chooseClip();
 };
 

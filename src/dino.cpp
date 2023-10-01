@@ -1,4 +1,5 @@
 #include "dino.h"
+#include "SDL2/SDL_image.h"
 
 bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)
 {
@@ -15,8 +16,12 @@ bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)
     return false;
 }
 
-void dino::set_clips()
+void dino::set_clips(SDL_Renderer *rend)
 {
+
+    SDL_Surface *imageSurface = IMG_Load("./picture/spriteDino.png");
+    this->imageTexture = SDL_CreateTextureFromSurface(rend, imageSurface);
+    SDL_FreeSurface(imageSurface);
     // On coupe la feuille de sprite
     for (int i = 0; i < 5; i++)
     {
@@ -44,18 +49,12 @@ dino::dino(SDL_Renderer *rend)
     a.x = 100;
     a.y = 420;
 
-    SDL_Surface *imageSurface = IMG_Load("./picture/spriteDino.png");
-    this->imageTexture = SDL_CreateTextureFromSurface(rend, imageSurface);
-    SDL_FreeSurface(imageSurface);
-
     this->hitbox = a;
-    this->set_clips();
+    this->set_clips(rend);
 }
 
 dino::~dino()
 {
-    SDL_DestroyTexture(this->imageTexture);
-    delete this;
 }
 
 SDL_Rect dino::getHitbox()
@@ -90,9 +89,21 @@ void dino::chooseClip()
             {
                 this->currentClip = this->clips[5];
             }
-            this->animation = 2;
+            this->animation += 1;
         }
         else if (this->animation == 10)
+        {
+            if (!this->down)
+            {
+                this->currentClip = this->clips[3];
+            }
+            else
+            {
+                this->currentClip = this->clips[6];
+            }
+            this->animation += 1;
+        }
+        else if (this->animation == 20)
         {
             if (!this->down)
             {
@@ -111,7 +122,7 @@ void dino::chooseClip()
     }
 }
 
-void dino::moveDino(SDL_Event &event, map &m)
+void dino::moveDino(SDL_Event &event, map &m, bool &stop)
 {
 
     while (SDL_PollEvent(&event))
@@ -121,20 +132,20 @@ void dino::moveDino(SDL_Event &event, map &m)
         {
         case SDL_QUIT:
             // Quit
-
-            m.setClose();
+            stop = true;
+            // m.setClose();
             break;
         case SDL_KEYDOWN:
             switch (event.key.keysym.scancode)
             {
             case SDL_SCANCODE_UP:
-                up = true;
+                this->up = true;
                 this->changeSens();
                 break;
             case SDL_SCANCODE_DOWN:
                 if (!this->jump)
                 {
-                    down = true;
+                    this->down = true;
                     this->sneak();
                 }
 
@@ -142,7 +153,7 @@ void dino::moveDino(SDL_Event &event, map &m)
             case SDL_SCANCODE_SPACE:
                 if (!this->down)
                 {
-                    jump = true;
+                    this->jump = true;
                 }
                 break;
 
@@ -154,13 +165,13 @@ void dino::moveDino(SDL_Event &event, map &m)
             switch (event.key.keysym.scancode)
             {
             case SDL_SCANCODE_UP:
-                up = false;
+                this->up = false;
 
                 break;
             case SDL_SCANCODE_DOWN:
                 if (!this->jump)
                 {
-                    down = false;
+                    this->down = false;
                     this->sneak();
                 }
                 break;
@@ -293,9 +304,9 @@ void dino::sneak()
 
 void dino::collision(map &m)
 {
-    for (int i = 0; i < m.getObstacles().size(); i++)
+    for (int i = 0; i < m.getIndice(); i++)
     {
-        if (checkCollision(this->hitbox, m.getObstacles()[i]))
+        if (checkCollision(this->hitbox, m.getCactus()[i].hitbox))
         {
 
             m.setClose();
