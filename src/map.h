@@ -35,7 +35,7 @@ private:
     bool mode1 = true;
 
 public:
-    map(SDL_Renderer *rend);
+    map(SDL_Renderer *rend, bool choix);
     ~map();
     bool getClose();
     void setClose();
@@ -49,6 +49,7 @@ public:
     cactus *getCactus();
 
     bool getMode();
+    void setMode(bool choix);
 };
 
 #endif

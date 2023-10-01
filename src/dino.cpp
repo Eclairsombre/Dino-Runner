@@ -46,8 +46,7 @@ dino::dino(SDL_Renderer *rend)
     SDL_Rect a = {
         100,
         420,
-        60,
-    };
+        60, 80};
 
     this->hitbox = a;
     this->set_clips(rend);

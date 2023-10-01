@@ -10,7 +10,7 @@ using namespace std;
 #include "SDL2/SDL_image.h"
 #include "dino.cpp"
 
-void playGame();
+void playGame(bool &choix);
 
 void menu()
 {
@@ -34,7 +34,7 @@ void menu()
 
     bool stop = false;
 
-    int choix = 1;
+    bool choix = true;
 
     SDL_Event event;
     while (!stop)
@@ -63,10 +63,18 @@ void menu()
                     SDL_DestroyRenderer(rend);
                     SDL_DestroyWindow(win);
                     SDL_Quit();
-                    playGame();
+                    playGame(choix);
 
                 case SDL_SCANCODE_LEFT:
-                    choix = 2;
+                    cout << choix << endl;
+                    if (choix)
+                    {
+                        choix = false;
+                    }
+                    else
+                    {
+                        choix = true;
+                    }
                 }
             }
         }
@@ -78,7 +86,7 @@ void menu()
 
     SDL_Quit();
 }
-void playGame()
+void playGame(bool &choix)
 {
 
     srand(time(NULL));
@@ -105,11 +113,14 @@ void playGame()
 
     dino d(rend);
 
-    map m(rend);
+    map m(rend, choix);
 
     bool stop = false;
 
     SDL_Event event;
+
+        cout << m.getMode() << endl;
+
     while (!stop)
     {
 

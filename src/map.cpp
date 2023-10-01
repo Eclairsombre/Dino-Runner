@@ -64,21 +64,19 @@ void cactus::set_clipsCactus()
     this->clipActuel = this->chooseClip[nb];
 }
 
-map::map(SDL_Renderer *rend)
+map::map(SDL_Renderer *rend, bool choix)
 {
     SDL_Rect s;
-    s.h = 60;
-    s.w = 1000;
-    s.x = 0;
-    s.y = 495;
-    if (this->mode1 == true)
+    this->mode1 = choix;
+
+    if (this->mode1)
     {
         s.h = 600;
         s.w = 1000;
         s.x = 0;
         s.y = 495;
     }
-    else
+    else if (!this->mode1)
     {
 
         s.h = 60;
@@ -151,6 +149,11 @@ cactus *map::getCactus()
     return this->cac;
 }
 
+void map::setMode(bool choix)
+{
+
+    this->mode1 = choix;
+}
 void map::setClose()
 {
     this->close = true;
