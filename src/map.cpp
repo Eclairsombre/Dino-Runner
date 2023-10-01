@@ -71,6 +71,21 @@ map::map(SDL_Renderer *rend)
     s.w = 1000;
     s.x = 0;
     s.y = 495;
+    if (this->mode1 == true)
+    {
+        s.h = 600;
+        s.w = 1000;
+        s.x = 0;
+        s.y = 495;
+    }
+    else
+    {
+
+        s.h = 60;
+        s.w = 1000;
+        s.x = 0;
+        s.y = 495;
+    }
 
     this->spawnRate = 4;
     this->sol = s;
@@ -117,9 +132,18 @@ bool map::getClose()
 {
     return this->close;
 }
-int map::getIndice()
+int map::getIndiceCactus()
 {
     return this->indiceCactus;
+}
+
+bool map::getMode()
+{
+    return this->mode1;
+}
+int map::getIndiceOiseau()
+{
+    return this->indiceOiseau;
 }
 
 cactus *map::getCactus()

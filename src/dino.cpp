@@ -43,16 +43,15 @@ void dino::set_clips(SDL_Renderer *rend)
 }
 dino::dino(SDL_Renderer *rend)
 {
-    SDL_Rect a;
-    a.h = 80;
-    a.w = 60;
-    a.x = 100;
-    a.y = 420;
+    SDL_Rect a = {
+        100,
+        420,
+        60,
+    };
 
     this->hitbox = a;
     this->set_clips(rend);
 }
-
 dino::~dino()
 {
 }
@@ -73,6 +72,7 @@ void dino::show(SDL_Renderer *rend)
 
 void dino::chooseClip()
 {
+
     if (this->jump)
     {
         this->currentClip = this->clips[0];
@@ -85,7 +85,7 @@ void dino::chooseClip()
             {
                 this->currentClip = this->clips[2];
             }
-            else
+            else if (this->down)
             {
                 this->currentClip = this->clips[5];
             }
@@ -97,7 +97,7 @@ void dino::chooseClip()
             {
                 this->currentClip = this->clips[3];
             }
-            else
+            else if (this->down)
             {
                 this->currentClip = this->clips[6];
             }
@@ -109,7 +109,7 @@ void dino::chooseClip()
             {
                 this->currentClip = this->clips[3];
             }
-            else
+            else if (this->down)
             {
                 this->currentClip = this->clips[6];
             }
@@ -139,8 +139,11 @@ void dino::moveDino(SDL_Event &event, map &m, bool &stop)
             switch (event.key.keysym.scancode)
             {
             case SDL_SCANCODE_UP:
-                this->up = true;
-                this->changeSens();
+                if (!m.getMode())
+                {
+                    this->up = true;
+                    this->changeSens();
+                }
                 break;
             case SDL_SCANCODE_DOWN:
                 if (!this->jump)
@@ -165,7 +168,10 @@ void dino::moveDino(SDL_Event &event, map &m, bool &stop)
             switch (event.key.keysym.scancode)
             {
             case SDL_SCANCODE_UP:
-                this->up = false;
+                if (!m.getMode())
+                {
+                    this->up = false;
+                }
 
                 break;
             case SDL_SCANCODE_DOWN:
@@ -304,7 +310,15 @@ void dino::sneak()
 
 void dino::collision(map &m)
 {
-    for (int i = 0; i < m.getIndice(); i++)
+    for (int i = 0; i < m.getIndiceCactus(); i++)
+    {
+        if (checkCollision(this->hitbox, m.getCactus()[i].hitbox))
+        {
+
+            m.setClose();
+        }
+    }
+    for (int i = 0; i < m.getIndiceOiseau(); i++)
     {
         if (checkCollision(this->hitbox, m.getCactus()[i].hitbox))
         {

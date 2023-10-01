@@ -32,6 +32,8 @@ private:
     long timer;
     bool spawn = true, close;
 
+    bool mode1 = true;
+
 public:
     map(SDL_Renderer *rend);
     ~map();
@@ -42,8 +44,11 @@ public:
     void moveObstacle();
 
     void chooseClip();
-    int getIndice();
+    int getIndiceOiseau();
+    int getIndiceCactus();
     cactus *getCactus();
+
+    bool getMode();
 };
 
 #endif
