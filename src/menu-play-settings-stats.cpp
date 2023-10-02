@@ -198,12 +198,10 @@ void playGame(bool &choix)
 
     map m(rend, choix);
 
-    bool stop = false, start = true;
+    bool stop = false, start = true, restart = false;
     int time = 0;
 
     SDL_Event event;
-
-    cout << m.getMode() << endl;
 
     SDL_Color noir = {0, 0, 0};
     TTF_Font *dogica = TTF_OpenFont("font/dogica.ttf", 16);
@@ -243,7 +241,10 @@ void playGame(bool &choix)
         SDL_RenderClear(rend);
 
         d.chooseClip();
-        m.showKey(rend, dogica, noir);
+        if (!restart)
+        {
+            m.showKey(rend, dogica, noir);
+        }
 
         d.show(rend);
 
@@ -256,6 +257,10 @@ void playGame(bool &choix)
 
         while (!start)
         {
+            if (!restart)
+            {
+                restart = true;
+            }
             SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 
             SDL_RenderClear(rend);

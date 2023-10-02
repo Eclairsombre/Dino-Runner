@@ -412,3 +412,7 @@ void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
     SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
     SDL_RenderCopy(rend, pTextureTxtstart, nullptr, &t_start);
 }
+
+void map::restartWindows()
+{
+}
