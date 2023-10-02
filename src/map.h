@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 #include <vector>
+#include "SDL2/SDL_image.h"
 class oiseau
 {
 public:
@@ -35,12 +36,10 @@ private:
     cactus cac[500];
     oiseau oi[500];
     nuage nu[500];
-
     SDL_Texture *imageOiseau;
-    int vx, spawnRate, indiceNuage = 0, indiceCactus = 0, indiceOiseau = 0;
+    int vx, spawnRate, indiceNuage = 0, indiceCactus = 0, indiceOiseau = 0, score = 0;
     long timer;
     bool spawn = true, close;
-
     bool mode1 = true, increaseSpeed = true;
 
 public:
@@ -60,6 +59,9 @@ public:
     bool getMode();
     void setMode(bool choix);
     void ActuVitesse();
+    void actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTextureTxtScore, SDL_Rect t_score, TTF_Font *dogica, SDL_Color blanc);
+    int getScore();
+    void showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir);
 };
 
 #endif

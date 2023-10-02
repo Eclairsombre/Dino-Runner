@@ -198,41 +198,92 @@ void playGame(bool &choix)
 
     map m(rend, choix);
 
-    bool stop = false;
+    bool stop = false, start = true;
+    int time = 0;
 
     SDL_Event event;
 
     cout << m.getMode() << endl;
 
+    SDL_Color noir = {0, 0, 0};
+    TTF_Font *dogica = TTF_OpenFont("font/dogica.ttf", 16);
+    if (dogica == NULL)
+    {
+        fprintf(stderr, "Impossible de charger \"dogica.ttf\"");
+        exit(EXIT_FAILURE);
+    }
+    string text = "SCORE:";
+
+    SDL_Texture *pTextureTxtScore;
+
+    SDL_Rect t_score;
+
     while (!stop)
     {
+        while (SDL_PollEvent(&event))
+        {
+
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                // Quit
+                stop = true;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.scancode)
+                {
+                case SDL_SCANCODE_SPACE:
+
+                    start = false;
+                }
+            }
+        }
 
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 
         SDL_RenderClear(rend);
 
         d.chooseClip();
+        m.showKey(rend, dogica, noir);
 
         d.show(rend);
 
         m.show(rend);
 
-        d.moveDino(event, m, stop);
-
-        d.Gravity();
-
-        m.addObstacle(rend);
-
-        m.moveObstacle();
-
-        m.chooseClip();
-
-        m.ActuVitesse();
-
-        d.collision(m, stop);
-
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
+
+        time = SDL_GetTicks();
+
+        while (!start)
+        {
+            SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+
+            SDL_RenderClear(rend);
+
+            d.chooseClip();
+
+            d.show(rend);
+
+            m.show(rend);
+
+            d.moveDino(event, m, start);
+
+            d.Gravity();
+
+            m.addObstacle(rend);
+
+            m.moveObstacle();
+
+            m.chooseClip();
+
+            m.ActuVitesse();
+            m.actuScore(rend, time, text, pTextureTxtScore, t_score, dogica, noir);
+
+            // d.collision(m, stop);
+
+            SDL_RenderPresent(rend);
+            SDL_Delay(1000 / 60);
+        }
     }
 
     SDL_DestroyRenderer(rend);

@@ -160,6 +160,11 @@ bool map::getMode()
 {
     return this->mode1;
 }
+
+int map::getScore()
+{
+    return this->score;
+}
 int map::getIndiceOiseau()
 {
     return this->indiceOiseau;
@@ -316,4 +321,94 @@ void map::ActuVitesse()
     {
         this->increaseSpeed = true;
     }
+}
+
+void map::actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTextureTxtScore, SDL_Rect t_score, TTF_Font *dogica, SDL_Color noir)
+{
+    long timer = SDL_GetTicks();
+    this->score = timer / 100 - time / 100;
+
+    text += to_string(this->score);
+    const char *textScore = text.c_str();
+
+    SDL_Surface *texte_score = TTF_RenderText_Blended(dogica, textScore, noir);
+
+    int txtW = 0;
+    int txtH = 0;
+
+    pTextureTxtScore = SDL_CreateTextureFromSurface(rend, texte_score);
+    SDL_FreeSurface(texte_score);
+    SDL_QueryTexture(pTextureTxtScore, NULL, NULL, &txtW, &txtH);
+
+    t_score.x = 10;
+    t_score.y = 10;
+    t_score.w = txtW;
+    t_score.h = txtH;
+
+    SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
+}
+
+void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
+{
+    SDL_Surface *texte_space = TTF_RenderText_Blended(dogica, "SPACE", noir);
+    SDL_Surface *texte_start = TTF_RenderText_Blended(dogica, "JUMP/START", noir);
+    SDL_Surface *texte_sneak = TTF_RenderText_Blended(dogica, "SNEAK", noir);
+
+    int txtW = 0;
+    int txtH = 0;
+
+    SDL_Texture *pTextureTxtScore = SDL_CreateTextureFromSurface(rend, texte_space);
+    SDL_FreeSurface(texte_space);
+
+    SDL_Texture *pTextureTxtstart = SDL_CreateTextureFromSurface(rend, texte_start);
+    SDL_FreeSurface(texte_start);
+
+    SDL_Texture *pTextureTxtsneak = SDL_CreateTextureFromSurface(rend, texte_sneak);
+    SDL_FreeSurface(texte_sneak);
+
+    SDL_QueryTexture(pTextureTxtScore, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_score;
+    t_score.x = 450;
+    t_score.y = 210;
+    t_score.w = txtW;
+    t_score.h = txtH;
+
+    SDL_Rect spaceRect;
+    spaceRect.x = 400;
+    spaceRect.y = 200;
+    spaceRect.w = txtW + 100;
+    spaceRect.h = txtH + 20;
+
+    SDL_QueryTexture(pTextureTxtstart, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_start;
+    t_start.x = 415;
+    t_start.y = 240;
+    t_start.w = txtW;
+    t_start.h = txtH;
+
+    SDL_QueryTexture(pTextureTxtsneak, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_sneak;
+    t_sneak.x = 615;
+    t_sneak.y = 240;
+    t_sneak.w = txtW;
+    t_sneak.h = txtH;
+
+    SDL_Surface *imageSurface = IMG_Load("./picture/flecheDown.png");
+
+    SDL_Texture *pTextureTxtFleche = SDL_CreateTextureFromSurface(rend, imageSurface);
+    SDL_FreeSurface(imageSurface);
+
+    SDL_Rect t_arrow;
+    t_arrow.x = 630;
+    t_arrow.y = 190;
+    t_arrow.w = 40;
+    t_arrow.h = 40;
+
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+    SDL_RenderDrawRect(rend, &spaceRect);
+    SDL_RenderCopy(rend, pTextureTxtFleche, NULL, &t_arrow);
+    SDL_RenderDrawRect(rend, &t_arrow);
+    SDL_RenderCopy(rend, pTextureTxtsneak, nullptr, &t_sneak);
+    SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
+    SDL_RenderCopy(rend, pTextureTxtstart, nullptr, &t_start);
 }
