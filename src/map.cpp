@@ -4,7 +4,7 @@
 #include "SDL2/SDL_image.h"
 using namespace std;
 
-void sup_case(int i, int &indice, cactus tab_block[500], oiseau oi[500])
+void sup_case(int i, int &indice, cactus tab_block[500], oiseau oi[500], nuage nu[500])
 {
     // Supprime une case d'un tab
     if (tab_block != NULL)
@@ -19,6 +19,13 @@ void sup_case(int i, int &indice, cactus tab_block[500], oiseau oi[500])
         for (int y = i; y <= indice; y++)
         {
             oi[y] = oi[y + 1];
+        }
+    }
+    if (nu != NULL)
+    {
+        for (int y = i; y <= indice; y++)
+        {
+            nu[y] = nu[y + 1];
         }
     }
 }
@@ -42,6 +49,20 @@ void oiseau::set_clips()
     this->hitbox.y = 380;
 
     this->clipActuel = this->clip1;
+}
+
+void nuage::set_clips()
+{
+
+    this->clipActuel.x = 0;
+    this->clipActuel.y = 0;
+    this->clipActuel.w = 90;
+    this->clipActuel.h = 30;
+
+    this->hitbox.h = 30;
+    this->hitbox.w = 90;
+    this->hitbox.x = 1100;
+    this->hitbox.y = 60 + rand() % 200;
 }
 
 void cactus::set_clipsCactus()
@@ -149,6 +170,11 @@ cactus *map::getCactus()
     return this->cac;
 }
 
+oiseau *map::getOiseau()
+{
+    return this->oi;
+}
+
 void map::setMode(bool choix)
 {
 
@@ -175,14 +201,14 @@ void map::addObstacle(SDL_Renderer *rend)
         switch (nb)
         {
         case 0:
-            cout << o.hitbox.x << endl;
+
             this->oi[this->indiceOiseau] = o;
             this->indiceOiseau += 1;
 
             break;
 
         case 1:
-            cout << c.hitbox.x << endl;
+
             this->cac[this->indiceCactus] = c;
             this->indiceCactus += 1;
             break;
@@ -191,9 +217,19 @@ void map::addObstacle(SDL_Renderer *rend)
             break;
         }
     }
-    if (this->timer / 1000 % this->spawnRate != 0 && this->spawn == false)
+    if (this->timer / 1000 % this->spawnRate != 0 && this->timer / 1000 % 2 != 0 && this->spawn == false)
     {
         this->spawn = true;
+    }
+
+    if (this->timer / 1000 % 2 == 0 && this->spawn)
+    {
+        this->spawn = false;
+
+        nuage n;
+        n.set_clips();
+        this->nu[this->indiceNuage] = n;
+        this->indiceNuage += 1;
     }
 }
 
@@ -207,7 +243,7 @@ void map::moveObstacle()
 
         if (this->cac[i].hitbox.x < -50)
         {
-            sup_case(i, this->indiceCactus, this->cac, NULL);
+            sup_case(i, this->indiceCactus, this->cac, NULL, NULL);
             indiceCactus -= 1;
         }
     }
@@ -219,8 +255,19 @@ void map::moveObstacle()
 
         if (this->oi[i].hitbox.x < -50)
         {
-            sup_case(i, this->indiceOiseau, NULL, this->oi);
+            sup_case(i, this->indiceOiseau, NULL, this->oi, NULL);
             indiceOiseau -= 1;
+        }
+    }
+    for (int i = 0; i < this->indiceNuage; i++)
+    {
+
+        this->nu[i].hitbox.x -= this->vx;
+
+        if (this->nu[i].hitbox.x < -150)
+        {
+            sup_case(i, this->indiceNuage, NULL, NULL, this->nu);
+            indiceNuage -= 1;
         }
     }
 }
@@ -239,6 +286,34 @@ void map::show(SDL_Renderer *rend)
 
         SDL_RenderCopy(rend, this->imageOiseau, &this->oi[i].clipActuel, &this->oi[i].hitbox);
     }
+    for (int i = 0; i < this->indiceNuage; i++)
+    {
+
+        SDL_RenderCopy(rend, this->imageOiseau, &this->nu[i].clipActuel, &this->nu[i].hitbox);
+    }
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     SDL_RenderFillRect(rend, &this->sol);
+}
+
+void map::ActuVitesse()
+{
+    this->timer = SDL_GetTicks();
+    if (this->timer / 1000 == 60)
+    {
+        this->vx = 5;
+        this->spawnRate = 2;
+        cout << "1min" << endl;
+        this->increaseSpeed = false;
+    }
+    else if (this->timer / 1000 % 60 == 0 && this->timer / 1000 != 0 && this->increaseSpeed)
+    {
+        this->increaseSpeed = false;
+
+        this->vx = 5 + (timer / 1000) / 60 - 1;
+        cout << vx << endl;
+    }
+    else
+    {
+        this->increaseSpeed = true;
+    }
 }

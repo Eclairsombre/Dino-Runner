@@ -307,22 +307,22 @@ void dino::sneak()
     }
 }
 
-void dino::collision(map &m)
+void dino::collision(map &m, bool &close)
 {
     for (int i = 0; i < m.getIndiceCactus(); i++)
     {
         if (checkCollision(this->hitbox, m.getCactus()[i].hitbox))
         {
 
-            m.setClose();
+            close = true;
         }
     }
     for (int i = 0; i < m.getIndiceOiseau(); i++)
     {
-        if (checkCollision(this->hitbox, m.getCactus()[i].hitbox))
+        if (checkCollision(this->hitbox, m.getOiseau()[i].hitbox))
         {
 
-            m.setClose();
+            close = true;
         }
     }
 }

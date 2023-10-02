@@ -23,7 +23,7 @@ public:
     void moveDino(SDL_Event &event, map &m, bool &stop);
     void changeSens();
     void sneak();
-    void collision(map &m);
+    void collision(map &m, bool &stop);
     void set_clips(SDL_Renderer *rend);
     void chooseClip();
 };
