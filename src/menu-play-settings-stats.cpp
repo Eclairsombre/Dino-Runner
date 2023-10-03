@@ -203,7 +203,7 @@ void playGame(bool &choix)
 
     SDL_Event event;
 
-    SDL_Color noir = {0, 0, 0};
+    SDL_Color noir = {0, 0, 0}, blanc = {255, 255, 255};
     TTF_Font *dogica = TTF_OpenFont("font/dogica.ttf", 16);
     if (dogica == NULL)
     {
@@ -231,7 +231,10 @@ void playGame(bool &choix)
                 {
                 case SDL_SCANCODE_SPACE:
 
-                    start = false;
+                    if (!restart)
+                    {
+                        start = false;
+                    }
                 }
             }
         }
@@ -249,6 +252,12 @@ void playGame(bool &choix)
         d.show(rend);
 
         m.show(rend);
+
+        if (restart)
+
+        {
+            m.restartWindows(rend, dogica, blanc);
+        }
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
@@ -284,7 +293,7 @@ void playGame(bool &choix)
             m.ActuVitesse();
             m.actuScore(rend, time, text, pTextureTxtScore, t_score, dogica, noir);
 
-            // d.collision(m, stop);
+            // d.collision(m, start);
 
             SDL_RenderPresent(rend);
             SDL_Delay(1000 / 60);

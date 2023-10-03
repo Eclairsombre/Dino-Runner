@@ -62,7 +62,7 @@ public:
     void actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTextureTxtScore, SDL_Rect t_score, TTF_Font *dogica, SDL_Color blanc);
     int getScore();
     void showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir);
-    void restartWindows();
+    void restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc);
 };
 
 #endif

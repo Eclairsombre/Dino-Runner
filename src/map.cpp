@@ -413,6 +413,31 @@ void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
     SDL_RenderCopy(rend, pTextureTxtstart, nullptr, &t_start);
 }
 
-void map::restartWindows()
+void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
 {
+    SDL_Rect carreRestart;
+    carreRestart.x = 350;
+    carreRestart.y = 200;
+    carreRestart.w = 300;
+    carreRestart.h = 200;
+
+    SDL_Surface *texte_gameOver = TTF_RenderText_Blended(dogica, "GAME OVER", blanc);
+
+    int txtW = 0;
+    int txtH = 0;
+
+    SDL_Texture *pTextureTxtGameOver = SDL_CreateTextureFromSurface(rend, texte_gameOver);
+    SDL_FreeSurface(texte_gameOver);
+
+    SDL_QueryTexture(pTextureTxtGameOver, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_gameOver;
+    t_gameOver.x = 410;
+    t_gameOver.y = 210;
+    t_gameOver.w = txtW + 40;
+    t_gameOver.h = txtH + 20;
+
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+    SDL_RenderFillRect(rend, &carreRestart);
+
+    SDL_RenderCopy(rend, pTextureTxtGameOver, nullptr, &t_gameOver);
 }
