@@ -10,6 +10,7 @@ class oiseau
 public:
     SDL_Rect clip1, clip2, hitbox, clipActuel;
     int animation = 1;
+    bool inverse = false;
     void set_clips();
 };
 
@@ -26,6 +27,7 @@ class cactus
 public:
     SDL_Rect hitbox, clipActuel, chooseClip[10];
     int animation = 1;
+    bool inverse = false;
     void set_clipsCactus();
 };
 

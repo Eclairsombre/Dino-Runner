@@ -42,11 +42,20 @@ void oiseau::set_clips()
     this->clip2.y = 0;
     this->clip2.w = 95;
     this->clip2.h = 64;
-
-    this->hitbox.h = 60;
-    this->hitbox.w = 60;
-    this->hitbox.x = 1020;
-    this->hitbox.y = 380;
+    if (!inverse)
+    {
+        this->hitbox.h = 60;
+        this->hitbox.w = 60;
+        this->hitbox.x = 1020;
+        this->hitbox.y = 380;
+    }
+    else
+    {
+        this->hitbox.h = 60;
+        this->hitbox.w = 60;
+        this->hitbox.x = 1020;
+        this->hitbox.y = 620;
+    }
 
     this->clipActuel = this->clip1;
 }
@@ -67,22 +76,42 @@ void nuage::set_clips()
 
 void cactus::set_clipsCactus()
 {
-
-    for (int i = 0; i <= 5; i++)
+    if (!inverse)
     {
-        this->chooseClip[i].h = 73;
-        this->chooseClip[i].w = 35;
-        this->chooseClip[i].x = 272 + i * 35;
-        this->chooseClip[i].y = 0;
+        for (int i = 0; i <= 5; i++)
+        {
+            this->chooseClip[i].h = 73;
+            this->chooseClip[i].w = 35;
+            this->chooseClip[i].x = 272 + i * 35;
+            this->chooseClip[i].y = 0;
+        }
+
+        this->hitbox.h = 60;
+        this->hitbox.w = 20;
+        this->hitbox.x = 1020;
+        this->hitbox.y = 440;
+
+        int nb = rand() % 5;
+        this->clipActuel = this->chooseClip[nb];
     }
+    else
+    {
+        for (int i = 0; i <= 5; i++)
+        {
+            this->chooseClip[i].h = 73;
+            this->chooseClip[i].w = 35;
+            this->chooseClip[i].x = 272 + i * 35;
+            this->chooseClip[i].y = 0;
+        }
 
-    this->hitbox.h = 60;
-    this->hitbox.w = 20;
-    this->hitbox.x = 1020;
-    this->hitbox.y = 440;
+        this->hitbox.h = 60;
+        this->hitbox.w = 20;
+        this->hitbox.x = 1020;
+        this->hitbox.y = 560;
 
-    int nb = rand() % 5;
-    this->clipActuel = this->chooseClip[nb];
+        int nb = rand() % 5;
+        this->clipActuel = this->chooseClip[nb];
+    }
 }
 
 map::map(SDL_Renderer *rend, bool choix)
@@ -198,10 +227,18 @@ void map::addObstacle(SDL_Renderer *rend)
     {
         this->spawn = false;
         int nb = rand() % 2;
+        int nbInverse = rand() % 2;
         oiseau o;
         o.set_clips();
         cactus c;
         c.set_clipsCactus();
+
+        oiseau o2;
+        o2.inverse = true;
+        o2.set_clips();
+        cactus c2;
+        c2.inverse = true;
+        c2.set_clipsCactus();
 
         switch (nb)
         {
@@ -215,6 +252,24 @@ void map::addObstacle(SDL_Renderer *rend)
         case 1:
 
             this->cac[this->indiceCactus] = c;
+            this->indiceCactus += 1;
+            break;
+
+        default:
+            break;
+        }
+        switch (nbInverse)
+        {
+        case 0:
+
+            this->oi[this->indiceOiseau] = o2;
+            this->indiceOiseau += 1;
+
+            break;
+
+        case 1:
+
+            this->cac[this->indiceCactus] = c2;
             this->indiceCactus += 1;
             break;
 

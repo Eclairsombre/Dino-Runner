@@ -7,8 +7,8 @@
 class dino
 {
 private:
-    SDL_Rect hitbox, clips[10], currentClip;
-    SDL_Texture *imageTexture;
+    SDL_Rect hitbox, clips[10], clipsInverse[10], currentClip;
+    SDL_Texture *imageTexture, *imageTextureInverse;
 
     bool up = false, down = false, jump = false, goUp = true, goSneak = true, stopSneak = false;
     int vy = 0, g = 2, animation = 2;

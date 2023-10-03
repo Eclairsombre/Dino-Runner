@@ -22,6 +22,10 @@ void dino::set_clips(SDL_Renderer *rend)
     SDL_Surface *imageSurface = IMG_Load("./picture/spriteDino.png");
     this->imageTexture = SDL_CreateTextureFromSurface(rend, imageSurface);
     SDL_FreeSurface(imageSurface);
+
+    imageSurface = IMG_Load("./picture/spriteDinoInverse.png");
+    this->imageTextureInverse = SDL_CreateTextureFromSurface(rend, imageSurface);
+    SDL_FreeSurface(imageSurface);
     // On coupe la feuille de sprite
     for (int i = 0; i < 5; i++)
     {
@@ -30,6 +34,23 @@ void dino::set_clips(SDL_Renderer *rend)
         this->clips[i].w = 88;
         this->clips[i].h = 94;
     }
+    for (int i = 0; i < 5; i++)
+    {
+        this->clipsInverse[i].x = 88 * i;
+        this->clipsInverse[i].y = 40;
+        this->clipsInverse[i].w = 88;
+        this->clipsInverse[i].h = 94;
+    }
+
+    this->clipsInverse[5].x = 568;
+    this->clipsInverse[5].y = 28;
+    this->clipsInverse[5].w = 170;
+    this->clipsInverse[5].h = 84;
+
+    this->clipsInverse[6].x = 733;
+    this->clipsInverse[6].y = 30;
+    this->clipsInverse[6].w = 174;
+    this->clipsInverse[6].h = 81;
 
     this->clips[5].x = 547;
     this->clips[5].y = 21;
@@ -64,21 +85,29 @@ void dino::show(SDL_Renderer *rend)
 {
 
     SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-
-    SDL_RenderCopy(rend, this->imageTexture, &this->currentClip, &this->hitbox);
+    if (this->hitbox.y <= 460)
+    {
+        SDL_RenderCopy(rend, this->imageTexture, &this->currentClip, &this->hitbox);
+    }
+    else if (this->hitbox.y >= 500)
+    {
+        SDL_RenderCopy(rend, this->imageTextureInverse, &this->currentClip, &this->hitbox);
+    }
     // SDL_RenderFillRect(rend, &this->hitbox);}
 }
 
 void dino::chooseClip()
 {
 
-    if (this->jump)
+    if (this->hitbox.y <= 460)
+
     {
-        this->currentClip = this->clips[0];
-    }
-    else
-    {
-        if (this->animation == 1)
+        if (this->jump)
+        {
+
+            this->currentClip = this->clips[0];
+        }
+        else if (this->animation == 1)
         {
             if (!this->down)
             {
@@ -111,6 +140,54 @@ void dino::chooseClip()
             else if (this->down)
             {
                 this->currentClip = this->clips[6];
+            }
+            this->animation = 1;
+        }
+        else
+        {
+            this->animation++;
+        }
+    }
+    else if (this->hitbox.y >= 500)
+    {
+        if (this->jump)
+        {
+
+            this->currentClip = this->clipsInverse[0];
+        }
+        else if (this->animation == 1)
+        {
+            if (!this->down)
+            {
+                this->currentClip = this->clipsInverse[2];
+            }
+            else if (this->down)
+            {
+                this->currentClip = this->clipsInverse[5];
+            }
+            this->animation += 1;
+        }
+        else if (this->animation == 10)
+        {
+            if (!this->down)
+            {
+                this->currentClip = this->clipsInverse[3];
+            }
+            else if (this->down)
+            {
+                this->currentClip = this->clipsInverse[6];
+            }
+            this->animation += 1;
+        }
+        else if (this->animation == 20)
+        {
+            if (!this->down)
+            {
+                this->currentClip = this->clipsInverse[3];
+            }
+            else if (this->down)
+            {
+                this->currentClip = this->clipsInverse[6];
             }
             this->animation = 1;
         }
@@ -217,7 +294,7 @@ void dino::Gravity()
 
         this->hitbox.y += this->vy;
     }
-    else if (this->hitbox.y >= 560)
+    else if (this->hitbox.y >= 550)
     {
         if (jump)
         {
@@ -233,9 +310,9 @@ void dino::Gravity()
             }
         }
 
-        if (this->hitbox.y + vy < 560)
+        if (this->hitbox.y + vy < 550)
         {
-            this->hitbox.y = 560;
+            this->hitbox.y = 550;
             vy = 0;
             jump = false;
             goUp = true;
@@ -247,17 +324,20 @@ void dino::Gravity()
 
 void dino::changeSens()
 {
-    if (!this->jump)
+    if (!this->down)
     {
-        if (this->hitbox.y == 420)
+        if (!this->jump)
         {
+            if (this->hitbox.y == 420)
+            {
 
-            this->hitbox.y = 560;
-        }
-        else if (this->hitbox.y == 560)
-        {
+                this->hitbox.y = 550;
+            }
+            else if (this->hitbox.y == 550)
+            {
 
-            this->hitbox.y = 420;
+                this->hitbox.y = 420;
+            }
         }
     }
 }
