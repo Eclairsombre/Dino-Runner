@@ -11,6 +11,7 @@ using namespace std;
 #include "dino.cpp"
 
 void playGame(bool &choix);
+void settings();
 
 void menu()
 {
@@ -158,6 +159,20 @@ void menu()
                     SDL_Quit();
                     playGame(choix);
                 }
+                else if (mouseX >= 250 && mouseX <= 450 && mouseY >= 380 && mouseY <= 455)
+                {
+                    stop = true;
+                    SDL_DestroyRenderer(rend);
+                    SDL_DestroyWindow(win);
+                    SDL_Quit();
+                    settings();
+                }
+
+                SDL_Rect bouton_settings;
+                bouton_settings.h = 75;
+                bouton_settings.w = 200;
+                bouton_settings.x = 250;
+                bouton_settings.y = 380;
             }
         }
 
@@ -200,7 +215,8 @@ void playGame(bool &choix)
 
     bool stop = false, start = true, restart = false;
     int time = 0;
-
+    int mouseX;
+    int mouseY;
     SDL_Event event;
 
     SDL_Color noir = {0, 0, 0}, blanc = {255, 255, 255};
@@ -234,6 +250,27 @@ void playGame(bool &choix)
                     if (!restart)
                     {
                         start = false;
+                    }
+                }
+            case SDL_MOUSEBUTTONDOWN:
+                mouseX = event.button.x;
+                mouseY = event.button.y;
+                if (restart)
+                {
+                    if (mouseX >= 400 && mouseX <= 600 && mouseY >= 270 && mouseY <= 320)
+                    {
+                        dino tempDino(rend);
+                        d = tempDino;
+
+                        map tempMap(rend, choix);
+
+                        m = tempMap;
+                        restart = false;
+                        start = false;
+                    }
+                    else if (mouseX >= 400 && mouseX <= 600 && mouseY >= 325 && mouseY <= 375)
+                    {
+                        stop = true;
                     }
                 }
             }
@@ -304,6 +341,93 @@ void playGame(bool &choix)
     SDL_DestroyWindow(win);
 
     Mix_CloseAudio();
+
+    SDL_Quit();
+    menu();
+}
+
+void settings()
+{
+
+    srand(time(NULL));
+    // Initialisation
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    {
+        printf("Erreur lors de l'initialisation de SDL: %s\n", SDL_GetError());
+    }
+    if (TTF_Init() == -1)
+    {
+        printf("TTF_Init: %s\n", TTF_GetError());
+    }
+
+    // Initialisation window
+
+    SDL_Window *win = SDL_CreateWindow("DINO RUNNER", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 700, 500, 0);
+    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
+    SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
+
+    bool stop = false;
+
+    bool choix = true;
+
+    int mouseX;
+    int mouseY;
+
+    SDL_Color blanc = {255, 255, 255};
+    TTF_Font *dogica = TTF_OpenFont("font/dogica.ttf", 16);
+    if (dogica == NULL)
+    {
+        fprintf(stderr, "Impossible de charger \"dogica.ttf\"");
+        exit(EXIT_FAILURE);
+    }
+
+    SDL_Rect retour;
+    retour.h = 75;
+    retour.w = 200;
+    retour.x = 50;
+    retour.y = 400;
+
+    SDL_Event event;
+    while (!stop)
+
+    {
+
+        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+
+        SDL_RenderClear(rend);
+
+        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+        SDL_RenderDrawRect(rend, &retour);
+
+        while (SDL_PollEvent(&event))
+        {
+
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                // Quit
+                stop = true;
+
+                break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.scancode)
+                {
+
+                case SDL_MOUSEBUTTONDOWN:
+                    mouseX = event.button.x;
+                    mouseY = event.button.y;
+                    if (mouseX >= 50 && mouseX <= 250 && mouseY >= 400 && mouseY <= 475)
+                    {
+                        stop = true;
+                    }
+                }
+            }
+        }
+        SDL_RenderPresent(rend);
+        SDL_Delay(1000 / 60);
+    }
+    SDL_DestroyRenderer(rend);
+    SDL_DestroyWindow(win);
 
     SDL_Quit();
     menu();

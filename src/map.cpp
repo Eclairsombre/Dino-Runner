@@ -476,7 +476,21 @@ void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
     carreRestart.w = 300;
     carreRestart.h = 200;
 
+    SDL_Rect boutonRestart;
+    boutonRestart.x = 400;
+    boutonRestart.y = 270;
+    boutonRestart.w = 200;
+    boutonRestart.h = 50;
+
+    SDL_Rect boutonMenu;
+    boutonMenu.x = 400;
+    boutonMenu.y = 325;
+    boutonMenu.w = 200;
+    boutonMenu.h = 50;
+
     SDL_Surface *texte_gameOver = TTF_RenderText_Blended(dogica, "GAME OVER", blanc);
+    SDL_Surface *texte_restart = TTF_RenderText_Blended(dogica, "RESTART", blanc);
+    SDL_Surface *texte_menu = TTF_RenderText_Blended(dogica, "MENU", blanc);
 
     int txtW = 0;
     int txtH = 0;
@@ -486,13 +500,39 @@ void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
 
     SDL_QueryTexture(pTextureTxtGameOver, NULL, NULL, &txtW, &txtH);
     SDL_Rect t_gameOver;
-    t_gameOver.x = 410;
+    t_gameOver.x = 405;
     t_gameOver.y = 210;
-    t_gameOver.w = txtW + 40;
-    t_gameOver.h = txtH + 20;
+    t_gameOver.w = txtW + 50;
+    t_gameOver.h = txtH + 30;
+
+    SDL_Texture *pTextureTxtRestart = SDL_CreateTextureFromSurface(rend, texte_restart);
+    SDL_FreeSurface(texte_restart);
+
+    SDL_QueryTexture(pTextureTxtRestart, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_restart;
+    t_restart.x = 430;
+    t_restart.y = 280;
+    t_restart.w = txtW + 40;
+    t_restart.h = txtH + 20;
+
+    SDL_Texture *pTextureTxtMenu = SDL_CreateTextureFromSurface(rend, texte_menu);
+    SDL_FreeSurface(texte_menu);
+
+    SDL_QueryTexture(pTextureTxtMenu, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_menu;
+    t_menu.x = 450;
+    t_menu.y = 334;
+    t_menu.w = txtW + 40;
+    t_menu.h = txtH + 20;
 
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     SDL_RenderFillRect(rend, &carreRestart);
 
+    SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+    SDL_RenderDrawRect(rend, &boutonRestart);
+    SDL_RenderDrawRect(rend, &boutonMenu);
+
     SDL_RenderCopy(rend, pTextureTxtGameOver, nullptr, &t_gameOver);
+    SDL_RenderCopy(rend, pTextureTxtMenu, nullptr, &t_menu);
+    SDL_RenderCopy(rend, pTextureTxtRestart, nullptr, &t_restart);
 }
