@@ -378,19 +378,19 @@ void settings(bool &choix, bool &musique)
     }
 
     SDL_Surface *texte_settings = TTF_RenderText_Blended(dogica, "SETTINGS", blanc);
-    SDL_Surface *texte_mode = TTF_RenderText_Blended(dogica, "Change mode :", blanc);
-    SDL_Surface *texte_music = TTF_RenderText_Blended(dogica, "Music :", blanc);
+    SDL_Surface *texte_back = TTF_RenderText_Blended(dogica, "BACK", blanc);
 
     int txtW = 0;
     int txtH = 0;
 
     SDL_Texture *pTextureTxtSettings = SDL_CreateTextureFromSurface(rend, texte_settings);
-    SDL_Texture *pTextureTxtMode = SDL_CreateTextureFromSurface(rend, texte_mode);
-    SDL_Texture *pTextureTxtMusic = SDL_CreateTextureFromSurface(rend, texte_music);
+    SDL_Texture *pTextureTxtBack = SDL_CreateTextureFromSurface(rend, texte_back);
+    SDL_Texture *pTextureTxtMode;
+    SDL_Texture *pTextureTxtMusic;
 
-    SDL_FreeSurface(texte_mode);
-    SDL_FreeSurface(texte_music);
     SDL_FreeSurface(texte_settings);
+
+    SDL_FreeSurface(texte_back);
 
     SDL_QueryTexture(pTextureTxtSettings, NULL, NULL, &txtW, &txtH);
     SDL_Rect t_settings;
@@ -398,34 +398,32 @@ void settings(bool &choix, bool &musique)
     t_settings.y = 50;
     t_settings.w = txtW + 100;
     t_settings.h = txtH + 40;
-    SDL_QueryTexture(pTextureTxtMode, NULL, NULL, &txtW, &txtH);
+
+    SDL_QueryTexture(pTextureTxtBack, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_back;
+    t_back.h = txtH + 20;
+    t_back.w = txtW + 40;
+    t_back.x = 75;
+    t_back.y = 420;
+
     SDL_Rect t_mode;
-    t_mode.x = 220;
-    t_mode.y = 170;
-    t_mode.w = txtW + 40;
-    t_mode.h = txtH + 20;
-    SDL_QueryTexture(pTextureTxtMusic, NULL, NULL, &txtW, &txtH);
     SDL_Rect t_music;
-    t_music.x = 220;
-    t_music.y = 270;
-    t_music.w = txtW + 40;
-    t_music.h = txtH + 20;
 
     SDL_Rect retour;
     retour.h = 75;
-    retour.w = 200;
+    retour.w = 150;
     retour.x = 50;
     retour.y = 400;
 
     SDL_Rect mode;
     mode.h = 75;
-    mode.w = 400;
+    mode.w = 390;
     mode.x = 190;
     mode.y = 150;
 
     SDL_Rect music;
     music.h = 75;
-    music.w = 300;
+    music.w = 230;
     music.x = 190;
     music.y = 250;
 
@@ -445,9 +443,10 @@ void settings(bool &choix, bool &musique)
         SDL_RenderDrawRect(rend, &music);
 
         SDL_RenderCopy(rend, pTextureTxtSettings, nullptr, &t_settings);
+        SDL_RenderCopy(rend, pTextureTxtBack, nullptr, &t_back);
 
-        SDL_RenderCopy(rend, pTextureTxtMusic, nullptr, &t_music);
         actuButtonMode(rend, pTextureTxtMode, t_mode, dogica, blanc, choix);
+        actuButtonMusic(rend, pTextureTxtMusic, t_music, dogica, blanc, musique);
 
         while (SDL_PollEvent(&event))
         {
@@ -468,7 +467,7 @@ void settings(bool &choix, bool &musique)
                 {
                     stop = true;
                 }
-                else if (mouseX >= 190 && mouseX <= 390 && mouseY >= 150 && mouseY <= 265)
+                else if (mouseX >= 190 && mouseX <= 600 && mouseY >= 150 && mouseY <= 225)
                 {
 
                     if (choix)
@@ -480,8 +479,21 @@ void settings(bool &choix, bool &musique)
                         choix = true;
                     }
                 }
+                else if (mouseX >= 190 && mouseX <= 420 && mouseY >= 250 && mouseY <= 325)
+                {
+
+                    if (musique)
+                    {
+                        musique = false;
+                    }
+                    else
+                    {
+                        musique = true;
+                    }
+                }
             }
         }
+
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
     }

@@ -574,11 +574,57 @@ void actuButtonMode(SDL_Renderer *rend, SDL_Texture *pTextureTxtMode, SDL_Rect t
         SDL_FreeSurface(texte_mode);
         SDL_QueryTexture(pTextureTxtMode, NULL, NULL, &txtW, &txtH);
 
-        t_mode.x = 205;
+        t_mode.x = 200;
         t_mode.y = 170;
         t_mode.w = txtW + 40;
         t_mode.h = txtH + 20;
 
         SDL_RenderCopy(rend, pTextureTxtMode, nullptr, &t_mode);
+    }
+}
+
+void actuButtonMusic(SDL_Renderer *rend, SDL_Texture *pTextureTxtMusic, SDL_Rect t_music, TTF_Font *dogica, SDL_Color blanc, bool &musique)
+{
+    if (musique)
+    {
+        string text = "Music : On";
+        const char *textMusic = text.c_str();
+
+        SDL_Surface *texte_music = TTF_RenderText_Blended(dogica, textMusic, blanc);
+
+        int txtW = 0;
+        int txtH = 0;
+
+        pTextureTxtMusic = SDL_CreateTextureFromSurface(rend, texte_music);
+        SDL_FreeSurface(texte_music);
+        SDL_QueryTexture(pTextureTxtMusic, NULL, NULL, &txtW, &txtH);
+
+        t_music.x = 200;
+        t_music.y = 270;
+        t_music.w = txtW + 40;
+        t_music.h = txtH + 20;
+
+        SDL_RenderCopy(rend, pTextureTxtMusic, nullptr, &t_music);
+    }
+    else
+    {
+        string text = "Music : Off";
+        const char *textMusic = text.c_str();
+
+        SDL_Surface *texte_music = TTF_RenderText_Blended(dogica, textMusic, blanc);
+
+        int txtW = 0;
+        int txtH = 0;
+
+        pTextureTxtMusic = SDL_CreateTextureFromSurface(rend, texte_music);
+        SDL_FreeSurface(texte_music);
+        SDL_QueryTexture(pTextureTxtMusic, NULL, NULL, &txtW, &txtH);
+
+        t_music.x = 200;
+        t_music.y = 270;
+        t_music.w = txtW + 40;
+        t_music.h = txtH + 20;
+
+        SDL_RenderCopy(rend, pTextureTxtMusic, nullptr, &t_music);
     }
 }
