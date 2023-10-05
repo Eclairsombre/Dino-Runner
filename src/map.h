@@ -65,6 +65,7 @@ public:
     int getScore();
     void showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir);
     void restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc);
+    void actuButtonMode(SDL_Renderer *rend, string &text, SDL_Texture *pTextureTxtScore, SDL_Rect t_mode, TTF_Font *dogica, SDL_Color blanc);
 };
 
 #endif

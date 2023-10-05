@@ -381,11 +381,57 @@ void settings()
         exit(EXIT_FAILURE);
     }
 
+    SDL_Surface *texte_settings = TTF_RenderText_Blended(dogica, "SETTINGS", blanc);
+    SDL_Surface *texte_mode = TTF_RenderText_Blended(dogica, "Change mode :", blanc);
+    SDL_Surface *texte_music = TTF_RenderText_Blended(dogica, "Music :", blanc);
+
+    int txtW = 0;
+    int txtH = 0;
+
+    SDL_Texture *pTextureTxtSettings = SDL_CreateTextureFromSurface(rend, texte_settings);
+    SDL_Texture *pTextureTxtMode = SDL_CreateTextureFromSurface(rend, texte_mode);
+    SDL_Texture *pTextureTxtMusic = SDL_CreateTextureFromSurface(rend, texte_music);
+
+    SDL_FreeSurface(texte_mode);
+    SDL_FreeSurface(texte_music);
+    SDL_FreeSurface(texte_settings);
+
+    SDL_QueryTexture(pTextureTxtSettings, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_settings;
+    t_settings.x = 235;
+    t_settings.y = 50;
+    t_settings.w = txtW + 100;
+    t_settings.h = txtH + 40;
+    SDL_QueryTexture(pTextureTxtSettings, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_mode;
+    t_mode.x = 220;
+    t_mode.y = 170;
+    t_mode.w = txtW + 40;
+    t_mode.h = txtH + 20;
+    SDL_QueryTexture(pTextureTxtSettings, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_music;
+    t_music.x = 220;
+    t_music.y = 270;
+    t_music.w = txtW + 40;
+    t_music.h = txtH + 20;
+
     SDL_Rect retour;
     retour.h = 75;
     retour.w = 200;
     retour.x = 50;
     retour.y = 400;
+
+    SDL_Rect mode;
+    mode.h = 75;
+    mode.w = 300;
+    mode.x = 200;
+    mode.y = 150;
+
+    SDL_Rect music;
+    music.h = 75;
+    music.w = 300;
+    music.x = 200;
+    music.y = 250;
 
     SDL_Event event;
     while (!stop)
@@ -399,6 +445,13 @@ void settings()
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
         SDL_RenderDrawRect(rend, &retour);
 
+        SDL_RenderDrawRect(rend, &mode);
+        SDL_RenderDrawRect(rend, &music);
+
+        SDL_RenderCopy(rend, pTextureTxtSettings, nullptr, &t_settings);
+        SDL_RenderCopy(rend, pTextureTxtMode, nullptr, &t_mode);
+        SDL_RenderCopy(rend, pTextureTxtMusic, nullptr, &t_music);
+
         while (SDL_PollEvent(&event))
         {
 
@@ -409,17 +462,14 @@ void settings()
                 stop = true;
 
                 break;
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.scancode)
-                {
 
-                case SDL_MOUSEBUTTONDOWN:
-                    mouseX = event.button.x;
-                    mouseY = event.button.y;
-                    if (mouseX >= 50 && mouseX <= 250 && mouseY >= 400 && mouseY <= 475)
-                    {
-                        stop = true;
-                    }
+            case SDL_MOUSEBUTTONDOWN:
+                mouseX = event.button.x;
+                mouseY = event.button.y;
+
+                if (mouseX >= 50 && mouseX <= 250 && mouseY >= 400 && mouseY <= 475)
+                {
+                    stop = true;
                 }
             }
         }

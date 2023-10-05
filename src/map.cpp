@@ -536,3 +536,28 @@ void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
     SDL_RenderCopy(rend, pTextureTxtMenu, nullptr, &t_menu);
     SDL_RenderCopy(rend, pTextureTxtRestart, nullptr, &t_restart);
 }
+
+void map::actuButtonMode(SDL_Renderer *rend, string &text, SDL_Texture *pTextureTxtScore, SDL_Rect t_mode, TTF_Font *dogica, SDL_Color blanc)
+{
+    if (this->mode1 = true)
+    {
+        text = "Change Mode : Normal";
+        const char *textMode = text.c_str();
+
+        SDL_Surface *texte_mode = TTF_RenderText_Blended(dogica, textMode, blanc);
+
+        int txtW = 0;
+        int txtH = 0;
+
+        pTextureTxtScore = SDL_CreateTextureFromSurface(rend, texte_mode);
+        SDL_FreeSurface(texte_mode);
+        SDL_QueryTexture(pTextureTxtScore, NULL, NULL, &txtW, &txtH);
+
+        t_mode.x = 10;
+        t_mode.y = 10;
+        t_mode.w = txtW;
+        t_mode.h = txtH;
+
+        SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_mode);
+    }
+}
