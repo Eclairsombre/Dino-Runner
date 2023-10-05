@@ -3,7 +3,7 @@
 
 int main()
 {
-
-    menu();
+    bool choix = true, musique = true;
+    menu(choix, musique);
     return 0;
 }

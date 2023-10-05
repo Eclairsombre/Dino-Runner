@@ -537,11 +537,11 @@ void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
     SDL_RenderCopy(rend, pTextureTxtRestart, nullptr, &t_restart);
 }
 
-void map::actuButtonMode(SDL_Renderer *rend, string &text, SDL_Texture *pTextureTxtScore, SDL_Rect t_mode, TTF_Font *dogica, SDL_Color blanc)
+void actuButtonMode(SDL_Renderer *rend, SDL_Texture *pTextureTxtMode, SDL_Rect t_mode, TTF_Font *dogica, SDL_Color blanc, bool &choix)
 {
-    if (this->mode1 = true)
+    if (choix)
     {
-        text = "Change Mode : Normal";
+        string text = "Change Mode : Normal";
         const char *textMode = text.c_str();
 
         SDL_Surface *texte_mode = TTF_RenderText_Blended(dogica, textMode, blanc);
@@ -549,15 +549,36 @@ void map::actuButtonMode(SDL_Renderer *rend, string &text, SDL_Texture *pTexture
         int txtW = 0;
         int txtH = 0;
 
-        pTextureTxtScore = SDL_CreateTextureFromSurface(rend, texte_mode);
+        SDL_Texture *pTextureTxtMode = SDL_CreateTextureFromSurface(rend, texte_mode);
         SDL_FreeSurface(texte_mode);
-        SDL_QueryTexture(pTextureTxtScore, NULL, NULL, &txtW, &txtH);
+        SDL_QueryTexture(pTextureTxtMode, NULL, NULL, &txtW, &txtH);
 
-        t_mode.x = 10;
-        t_mode.y = 10;
-        t_mode.w = txtW;
-        t_mode.h = txtH;
+        t_mode.x = 200;
+        t_mode.y = 170;
+        t_mode.w = txtW + 40;
+        t_mode.h = txtH + 20;
 
-        SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_mode);
+        SDL_RenderCopy(rend, pTextureTxtMode, nullptr, &t_mode);
+    }
+    else
+    {
+        string text = "Change Mode : Reverse";
+        const char *textMode = text.c_str();
+
+        SDL_Surface *texte_mode = TTF_RenderText_Blended(dogica, textMode, blanc);
+
+        int txtW = 0;
+        int txtH = 0;
+
+        SDL_Texture *pTextureTxtMode = SDL_CreateTextureFromSurface(rend, texte_mode);
+        SDL_FreeSurface(texte_mode);
+        SDL_QueryTexture(pTextureTxtMode, NULL, NULL, &txtW, &txtH);
+
+        t_mode.x = 205;
+        t_mode.y = 170;
+        t_mode.w = txtW + 40;
+        t_mode.h = txtH + 20;
+
+        SDL_RenderCopy(rend, pTextureTxtMode, nullptr, &t_mode);
     }
 }

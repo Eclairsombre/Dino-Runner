@@ -382,7 +382,7 @@ void dino::sneak()
                 this->chooseClip();
                 this->goSneak = true;
                 this->hitbox.h = 80;
-            }
+                        }
         }
     }
 }

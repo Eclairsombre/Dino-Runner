@@ -10,10 +10,10 @@ using namespace std;
 #include "SDL2/SDL_image.h"
 #include "dino.cpp"
 
-void playGame(bool &choix);
-void settings();
+void playGame(bool &choix, bool &musique);
+void settings(bool &choix, bool &musique);
 
-void menu()
+void menu(bool &choix, bool &musique)
 {
 
     srand(time(NULL));
@@ -34,8 +34,6 @@ void menu()
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
     bool stop = false;
-
-    bool choix = true;
 
     int mouseX;
     int mouseY;
@@ -135,7 +133,7 @@ void menu()
                     SDL_DestroyRenderer(rend);
                     SDL_DestroyWindow(win);
                     SDL_Quit();
-                    playGame(choix);
+                    playGame(choix, musique);
 
                 case SDL_SCANCODE_LEFT:
                     cout << choix << endl;
@@ -157,7 +155,7 @@ void menu()
                     SDL_DestroyRenderer(rend);
                     SDL_DestroyWindow(win);
                     SDL_Quit();
-                    playGame(choix);
+                    playGame(choix, musique);
                 }
                 else if (mouseX >= 250 && mouseX <= 450 && mouseY >= 380 && mouseY <= 455)
                 {
@@ -165,7 +163,7 @@ void menu()
                     SDL_DestroyRenderer(rend);
                     SDL_DestroyWindow(win);
                     SDL_Quit();
-                    settings();
+                    settings(choix, musique);
                 }
 
                 SDL_Rect bouton_settings;
@@ -184,7 +182,7 @@ void menu()
 
     SDL_Quit();
 }
-void playGame(bool &choix)
+void playGame(bool &choix, bool &musique)
 {
 
     srand(time(NULL));
@@ -343,10 +341,10 @@ void playGame(bool &choix)
     Mix_CloseAudio();
 
     SDL_Quit();
-    menu();
+    menu(choix, musique);
 }
 
-void settings()
+void settings(bool &choix, bool &musique)
 {
 
     srand(time(NULL));
@@ -367,8 +365,6 @@ void settings()
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
     bool stop = false;
-
-    bool choix = true;
 
     int mouseX;
     int mouseY;
@@ -402,13 +398,13 @@ void settings()
     t_settings.y = 50;
     t_settings.w = txtW + 100;
     t_settings.h = txtH + 40;
-    SDL_QueryTexture(pTextureTxtSettings, NULL, NULL, &txtW, &txtH);
+    SDL_QueryTexture(pTextureTxtMode, NULL, NULL, &txtW, &txtH);
     SDL_Rect t_mode;
     t_mode.x = 220;
     t_mode.y = 170;
     t_mode.w = txtW + 40;
     t_mode.h = txtH + 20;
-    SDL_QueryTexture(pTextureTxtSettings, NULL, NULL, &txtW, &txtH);
+    SDL_QueryTexture(pTextureTxtMusic, NULL, NULL, &txtW, &txtH);
     SDL_Rect t_music;
     t_music.x = 220;
     t_music.y = 270;
@@ -423,14 +419,14 @@ void settings()
 
     SDL_Rect mode;
     mode.h = 75;
-    mode.w = 300;
-    mode.x = 200;
+    mode.w = 400;
+    mode.x = 190;
     mode.y = 150;
 
     SDL_Rect music;
     music.h = 75;
     music.w = 300;
-    music.x = 200;
+    music.x = 190;
     music.y = 250;
 
     SDL_Event event;
@@ -449,12 +445,13 @@ void settings()
         SDL_RenderDrawRect(rend, &music);
 
         SDL_RenderCopy(rend, pTextureTxtSettings, nullptr, &t_settings);
-        SDL_RenderCopy(rend, pTextureTxtMode, nullptr, &t_mode);
+
         SDL_RenderCopy(rend, pTextureTxtMusic, nullptr, &t_music);
+        actuButtonMode(rend, pTextureTxtMode, t_mode, dogica, blanc, choix);
 
         while (SDL_PollEvent(&event))
         {
-
+            cout << choix << endl;
             switch (event.type)
             {
             case SDL_QUIT:
@@ -471,6 +468,18 @@ void settings()
                 {
                     stop = true;
                 }
+                else if (mouseX >= 190 && mouseX <= 390 && mouseY >= 150 && mouseY <= 265)
+                {
+
+                    if (choix)
+                    {
+                        choix = false;
+                    }
+                    else
+                    {
+                        choix = true;
+                    }
+                }
             }
         }
         SDL_RenderPresent(rend);
@@ -480,5 +489,5 @@ void settings()
     SDL_DestroyWindow(win);
 
     SDL_Quit();
-    menu();
+    menu(choix, musique);
 }
