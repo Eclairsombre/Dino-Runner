@@ -4,14 +4,14 @@
 #include "SDL2/SDL_image.h"
 using namespace std;
 
-void sup_case(int i, int &indice, cactus tab_block[500], oiseau oi[500], nuage nu[500])
+void sup_case(int i, int &indice, cactus cac[500], oiseau oi[500], nuage nu[500], doubleCactus douCac[500])
 {
-    // Supprime une case d'un tab
-    if (tab_block != NULL)
+
+    if (cac != NULL)
     {
         for (int y = i; y <= indice; y++)
         {
-            tab_block[y] = tab_block[y + 1];
+            cac[y] = cac[y + 1];
         }
     }
     if (oi != NULL)
@@ -26,6 +26,13 @@ void sup_case(int i, int &indice, cactus tab_block[500], oiseau oi[500], nuage n
         for (int y = i; y <= indice; y++)
         {
             nu[y] = nu[y + 1];
+        }
+    }
+    if (douCac != NULL)
+    {
+        for (int y = i; y <= indice; y++)
+        {
+            douCac[y] = douCac[y + 1];
         }
     }
 }
@@ -47,14 +54,14 @@ void oiseau::set_clips()
         this->hitbox.h = 60;
         this->hitbox.w = 60;
         this->hitbox.x = 1020;
-        this->hitbox.y = 380;
+        this->hitbox.y = 370;
     }
     else
     {
         this->hitbox.h = 60;
         this->hitbox.w = 60;
         this->hitbox.x = 1020;
-        this->hitbox.y = 620;
+        this->hitbox.y = 630;
     }
 
     this->clipActuel = this->clip1;
@@ -101,15 +108,69 @@ void cactus::set_clipsCactus()
             this->chooseClip[i].h = 73;
             this->chooseClip[i].w = 35;
             this->chooseClip[i].x = 272 + i * 35;
-            this->chooseClip[i].y = 0;
+            this->chooseClip[i].y = 33;
         }
 
         this->hitbox.h = 60;
         this->hitbox.w = 20;
         this->hitbox.x = 1020;
-        this->hitbox.y = 560;
+        this->hitbox.y = 550;
 
         int nb = rand() % 5;
+        this->clipActuel = this->chooseClip[nb];
+    }
+}
+
+void doubleCactus::set_clipsDoubleCactus()
+{
+    if (!inverse)
+    {
+        chooseClip[0].h = 100;
+        chooseClip[0].w = 102;
+        chooseClip[0].x = 479;
+        chooseClip[0].y = 0;
+
+        chooseClip[1].h = 100;
+        chooseClip[1].w = 99;
+        chooseClip[1].x = 580;
+        chooseClip[1].y = 0;
+
+        chooseClip[2].h = 100;
+        chooseClip[2].w = 104;
+        chooseClip[2].x = 679;
+        chooseClip[2].y = 0;
+
+        this->hitbox.h = 60;
+        this->hitbox.w = 50;
+        this->hitbox.x = 1020;
+        this->hitbox.y = 440;
+
+        int nb = rand() % 3;
+        this->clipActuel = this->chooseClip[nb];
+    }
+    else
+    {
+        chooseClip[0].h = 100;
+        chooseClip[0].w = 102;
+        chooseClip[0].x = 479;
+        chooseClip[0].y = 8;
+
+        chooseClip[1].h = 100;
+        chooseClip[1].w = 99;
+        chooseClip[1].x = 580;
+        chooseClip[1].y = 8;
+
+        chooseClip[2].h = 100;
+        chooseClip[2].w = 104;
+        chooseClip[2].x = 679;
+        chooseClip[2].y = 8;
+
+        this->hitbox.h = 60;
+        this->hitbox.w = 50;
+        this->hitbox.x = 1020;
+        this->hitbox.y = 550;
+
+        int nb = rand() % 3;
         this->clipActuel = this->chooseClip[nb];
     }
 }
@@ -135,6 +196,16 @@ map::map(SDL_Renderer *rend, bool choix)
         s.y = 495;
     }
 
+    this->murUp.x = 1050;
+    this->murUp.y = 400;
+    this->murUp.w = 2000;
+    this->murUp.h = 95;
+
+    this->murDown.x = 1050;
+    this->murDown.y = 550;
+    this->murDown.w = 2000;
+    this->murDown.h = 95;
+
     this->spawnRate = 4;
     this->sol = s;
 
@@ -144,6 +215,11 @@ map::map(SDL_Renderer *rend, bool choix)
     SDL_Surface *imageSurface = IMG_Load("./picture/sprite.png");
 
     this->imageOiseau = SDL_CreateTextureFromSurface(rend, imageSurface);
+    SDL_FreeSurface(imageSurface);
+
+    imageSurface = IMG_Load("./picture/spriteInverse.png");
+
+    this->imageOiseauInverse = SDL_CreateTextureFromSurface(rend, imageSurface);
     SDL_FreeSurface(imageSurface);
 }
 
@@ -190,6 +266,15 @@ bool map::getMode()
     return this->mode1;
 }
 
+bool map::getSpawnMur()
+{
+    return this->mUp || this->mDown;
+}
+SDL_Rect map::getMur()
+{
+    return this->mur;
+}
+
 int map::getScore()
 {
     return this->score;
@@ -223,15 +308,19 @@ void map::addObstacle(SDL_Renderer *rend)
 {
     this->timer = SDL_GetTicks();
 
+    cout << this->timer / 1000 << " " << this->mUp << " " << this->mDown << endl;
     if (this->timer / 1000 % this->spawnRate == 0 && this->spawn)
     {
         this->spawn = false;
-        int nb = rand() % 2;
-        int nbInverse = rand() % 2;
+
+        int nb = rand() % 3;
+        int nbInverse = rand() % 3;
         oiseau o;
         o.set_clips();
         cactus c;
         c.set_clipsCactus();
+        doubleCactus cd;
+        cd.set_clipsDoubleCactus();
 
         oiseau o2;
         o2.inverse = true;
@@ -239,43 +328,86 @@ void map::addObstacle(SDL_Renderer *rend)
         cactus c2;
         c2.inverse = true;
         c2.set_clipsCactus();
+        doubleCactus cd2;
+        cd2.inverse = true;
+        cd2.set_clipsDoubleCactus();
 
-        switch (nb)
+        if (!mUp)
+        {
+            switch (nb)
+            {
+            case 0:
+
+                this->oi[this->indiceOiseau] = o;
+                this->indiceOiseau += 1;
+
+                break;
+
+            case 1:
+
+                this->cac[this->indiceCactus] = c;
+                this->indiceCactus += 1;
+                break;
+            case 2:
+
+                this->douCac[this->indiceCactusDouble] = cd;
+                this->indiceCactusDouble += 1;
+                break;
+
+            default:
+                break;
+            }
+        }
+        if (!this->mode1 && !mDown)
+        {
+            switch (nbInverse)
+            {
+            case 0:
+
+                this->oi[this->indiceOiseau] = o2;
+                this->indiceOiseau += 1;
+
+                break;
+
+            case 1:
+
+                this->cac[this->indiceCactus] = c2;
+                this->indiceCactus += 1;
+                break;
+
+            case 2:
+
+                this->douCac[this->indiceCactusDouble] = cd2;
+                this->indiceCactusDouble += 1;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    if (this->timer / 1000 % 25 == 0 && this->timer / 1000 != 0 && !this->spawnMur)
+    {
+
+        int temp = rand() % 2;
+        switch (temp)
         {
         case 0:
-
-            this->oi[this->indiceOiseau] = o;
-            this->indiceOiseau += 1;
-
+            this->mUp = true;
+            this->spawnMur = true;
+            this->mur = this->murUp;
             break;
-
         case 1:
-
-            this->cac[this->indiceCactus] = c;
-            this->indiceCactus += 1;
+            this->mDown = true;
+            this->spawnMur = true;
+            this->mur = this->murDown;
             break;
-
         default:
             break;
         }
-        switch (nbInverse)
-        {
-        case 0:
-
-            this->oi[this->indiceOiseau] = o2;
-            this->indiceOiseau += 1;
-
-            break;
-
-        case 1:
-
-            this->cac[this->indiceCactus] = c2;
-            this->indiceCactus += 1;
-            break;
-
-        default:
-            break;
-        }
+    }
+    if (this->timer / 1000 % 25 != 0)
+    {
+        this->spawnMur = false;
     }
     if (this->timer / 1000 % this->spawnRate != 0 && this->timer / 1000 % 2 != 0 && this->spawn == false)
     {
@@ -303,7 +435,7 @@ void map::moveObstacle()
 
         if (this->cac[i].hitbox.x < -50)
         {
-            sup_case(i, this->indiceCactus, this->cac, NULL, NULL);
+            sup_case(i, this->indiceCactus, this->cac, NULL, NULL, NULL);
             indiceCactus -= 1;
         }
     }
@@ -315,7 +447,7 @@ void map::moveObstacle()
 
         if (this->oi[i].hitbox.x < -50)
         {
-            sup_case(i, this->indiceOiseau, NULL, this->oi, NULL);
+            sup_case(i, this->indiceOiseau, NULL, this->oi, NULL, NULL);
             indiceOiseau -= 1;
         }
     }
@@ -326,8 +458,29 @@ void map::moveObstacle()
 
         if (this->nu[i].hitbox.x < -150)
         {
-            sup_case(i, this->indiceNuage, NULL, NULL, this->nu);
+            sup_case(i, this->indiceNuage, NULL, NULL, this->nu, NULL);
             indiceNuage -= 1;
+        }
+    }
+    for (int i = 0; i < this->indiceCactusDouble; i++)
+    {
+
+        this->douCac[i].hitbox.x -= this->vx;
+
+        if (this->douCac[i].hitbox.x < -150)
+        {
+            sup_case(i, this->indiceCactusDouble, NULL, NULL, NULL, this->douCac);
+            indiceNuage -= 1;
+        }
+    }
+    if (this->mUp || this->mDown)
+    {
+
+        this->mur.x -= this->vx;
+        if (this->mur.x < -2020)
+        {
+            mUp = false;
+            mDown = false;
         }
     }
 }
@@ -338,8 +491,14 @@ void map::show(SDL_Renderer *rend)
     for (int i = 0; i < this->indiceCactus; i++)
     {
         // SDL_RenderFillRect(rend, &this->cac[i].hitbox);
-
-        SDL_RenderCopy(rend, this->imageOiseau, &this->cac[i].clipActuel, &this->cac[i].hitbox);
+        if (!cac[i].inverse)
+        {
+            SDL_RenderCopy(rend, this->imageOiseau, &this->cac[i].clipActuel, &this->cac[i].hitbox);
+        }
+        else
+        {
+            SDL_RenderCopy(rend, this->imageOiseauInverse, &this->cac[i].clipActuel, &this->cac[i].hitbox);
+        }
     }
     for (int i = 0; i < this->indiceOiseau; i++)
     {
@@ -351,6 +510,23 @@ void map::show(SDL_Renderer *rend)
 
         SDL_RenderCopy(rend, this->imageOiseau, &this->nu[i].clipActuel, &this->nu[i].hitbox);
     }
+    for (int i = 0; i < this->indiceCactusDouble; i++)
+    {
+        if (!douCac[i].inverse)
+        {
+            SDL_RenderCopy(rend, this->imageOiseau, &this->douCac[i].clipActuel, &this->douCac[i].hitbox);
+        }
+        else
+        {
+            SDL_RenderCopy(rend, this->imageOiseauInverse, &this->douCac[i].clipActuel, &this->douCac[i].hitbox);
+        }
+    }
+    if (mUp || mDown)
+    {
+        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+        SDL_RenderFillRect(rend, &this->mur);
+    }
+
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     SDL_RenderFillRect(rend, &this->sol);
 }
@@ -403,11 +579,12 @@ void map::actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTex
     SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
 }
 
-void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
+void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir, bool &choix)
 {
     SDL_Surface *texte_space = TTF_RenderText_Blended(dogica, "SPACE", noir);
     SDL_Surface *texte_start = TTF_RenderText_Blended(dogica, "JUMP/START", noir);
     SDL_Surface *texte_sneak = TTF_RenderText_Blended(dogica, "SNEAK", noir);
+    SDL_Surface *texte_reverse = TTF_RenderText_Blended(dogica, "REVERSE", noir);
 
     int txtW = 0;
     int txtH = 0;
@@ -421,7 +598,11 @@ void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
     SDL_Texture *pTextureTxtsneak = SDL_CreateTextureFromSurface(rend, texte_sneak);
     SDL_FreeSurface(texte_sneak);
 
+    SDL_Texture *pTextureTxtReverse = SDL_CreateTextureFromSurface(rend, texte_reverse);
+    SDL_FreeSurface(texte_reverse);
+
     SDL_QueryTexture(pTextureTxtScore, NULL, NULL, &txtW, &txtH);
+
     SDL_Rect t_score;
     t_score.x = 450;
     t_score.y = 210;
@@ -448,9 +629,21 @@ void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
     t_sneak.w = txtW;
     t_sneak.h = txtH;
 
+    SDL_QueryTexture(pTextureTxtReverse, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_reverse;
+    t_reverse.x = 600;
+    t_reverse.y = 120;
+    t_reverse.w = txtW;
+    t_reverse.h = txtH;
+
     SDL_Surface *imageSurface = IMG_Load("./picture/flecheDown.png");
 
     SDL_Texture *pTextureTxtFleche = SDL_CreateTextureFromSurface(rend, imageSurface);
+    SDL_FreeSurface(imageSurface);
+
+    imageSurface = IMG_Load("./picture/flecheUp.png");
+
+    SDL_Texture *pTextureTxtFlecheUp = SDL_CreateTextureFromSurface(rend, imageSurface);
     SDL_FreeSurface(imageSurface);
 
     SDL_Rect t_arrow;
@@ -459,10 +652,24 @@ void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir)
     t_arrow.w = 40;
     t_arrow.h = 40;
 
+    SDL_Rect t_arrowUp;
+    t_arrowUp.x = 630;
+    t_arrowUp.y = 140;
+    t_arrowUp.w = 40;
+    t_arrowUp.h = 40;
+
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     SDL_RenderDrawRect(rend, &spaceRect);
     SDL_RenderCopy(rend, pTextureTxtFleche, NULL, &t_arrow);
+
     SDL_RenderDrawRect(rend, &t_arrow);
+    if (!choix)
+    {
+        SDL_RenderCopy(rend, pTextureTxtFlecheUp, NULL, &t_arrowUp);
+        SDL_RenderDrawRect(rend, &t_arrowUp);
+        SDL_RenderCopy(rend, pTextureTxtReverse, nullptr, &t_reverse);
+    }
+
     SDL_RenderCopy(rend, pTextureTxtsneak, nullptr, &t_sneak);
     SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
     SDL_RenderCopy(rend, pTextureTxtstart, nullptr, &t_start);

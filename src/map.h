@@ -31,18 +31,29 @@ public:
     void set_clipsCactus();
 };
 
+class doubleCactus
+{
+public:
+    SDL_Rect hitbox, clipActuel, chooseClip[10];
+    int animation = 1;
+    bool inverse = false;
+    void set_clipsDoubleCactus();
+};
+
 class map
 {
 private:
-    SDL_Rect sol, clips[10];
+    SDL_Rect sol, clips[10], murUp, murDown, mur;
     cactus cac[500];
+    doubleCactus douCac[500];
     oiseau oi[500];
     nuage nu[500];
-    SDL_Texture *imageOiseau;
-    int vx, spawnRate, indiceNuage = 0, indiceCactus = 0, indiceOiseau = 0, score = 0;
+    SDL_Texture *imageOiseau, *imageOiseauInverse;
+    int vx, spawnRate, indiceCactusDouble = 0, indiceNuage = 0, indiceCactus = 0, indiceOiseau = 0, score = 0;
     long timer;
     bool spawn = true, close;
     bool mode1 = true, increaseSpeed = true;
+    bool mUp = false, mDown = false, spawnMur = false;
 
 public:
     map(SDL_Renderer *rend, bool choix);
@@ -52,7 +63,8 @@ public:
     void show(SDL_Renderer *rend);
     void addObstacle(SDL_Renderer *rend);
     void moveObstacle();
-
+    bool getSpawnMur();
+    SDL_Rect getMur();
     void chooseClip();
     int getIndiceOiseau();
     int getIndiceCactus();
@@ -63,7 +75,7 @@ public:
     void ActuVitesse();
     void actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTextureTxtScore, SDL_Rect t_score, TTF_Font *dogica, SDL_Color blanc);
     int getScore();
-    void showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir);
+    void showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir, bool &choix);
     void restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc);
 };
 

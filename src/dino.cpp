@@ -382,7 +382,7 @@ void dino::sneak()
                 this->chooseClip();
                 this->goSneak = true;
                 this->hitbox.h = 80;
-                        }
+            }
         }
     }
 }
@@ -400,6 +400,14 @@ void dino::collision(map &m, bool &close)
     for (int i = 0; i < m.getIndiceOiseau(); i++)
     {
         if (checkCollision(this->hitbox, m.getOiseau()[i].hitbox))
+        {
+
+            close = true;
+        }
+    }
+    if (m.getSpawnMur())
+    {
+        if (checkCollision(this->hitbox, m.getMur()))
         {
 
             close = true;

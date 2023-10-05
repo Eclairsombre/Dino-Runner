@@ -8,6 +8,7 @@ using namespace std;
 #include <cstdio>
 #include <SDL2/SDL_mixer.h>
 #include "SDL2/SDL_image.h"
+#include "SDL2/SDL_video.h"
 #include "dino.cpp"
 
 void playGame(bool &choix, bool &musique);
@@ -281,7 +282,7 @@ void playGame(bool &choix, bool &musique)
         d.chooseClip();
         if (!restart)
         {
-            m.showKey(rend, dogica, noir);
+            m.showKey(rend, dogica, noir, choix);
         }
 
         d.show(rend);
@@ -328,7 +329,7 @@ void playGame(bool &choix, bool &musique)
             m.ActuVitesse();
             m.actuScore(rend, time, text, pTextureTxtScore, t_score, dogica, noir);
 
-            // d.collision(m, start);
+            d.collision(m, start);
 
             SDL_RenderPresent(rend);
             SDL_Delay(1000 / 60);
@@ -450,7 +451,7 @@ void settings(bool &choix, bool &musique)
 
         while (SDL_PollEvent(&event))
         {
-            cout << choix << endl;
+
             switch (event.type)
             {
             case SDL_QUIT:
