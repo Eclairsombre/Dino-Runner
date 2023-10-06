@@ -289,6 +289,16 @@ cactus *map::getCactus()
     return this->cac;
 }
 
+int map::getIndiceDoubleCactus()
+{
+    return this->indiceCactusDouble;
+}
+
+doubleCactus *map::getDoubleCactus()
+{
+    return this->douCac;
+}
+
 oiseau *map::getOiseau()
 {
     return this->oi;
@@ -304,12 +314,11 @@ void map::setClose()
     this->close = true;
 }
 
-void map::addObstacle(SDL_Renderer *rend)
+void map::addObstacle(SDL_Renderer *rend, int time)
 {
     this->timer = SDL_GetTicks();
 
-    cout << this->timer / 1000 << " " << this->mUp << " " << this->mDown << endl;
-    if (this->timer / 1000 % this->spawnRate == 0 && this->spawn)
+    if ((this->timer / 1000 - time / 1000) % this->spawnRate == 0 && this->spawn)
     {
         this->spawn = false;
 
@@ -385,7 +394,7 @@ void map::addObstacle(SDL_Renderer *rend)
             }
         }
     }
-    if (this->timer / 1000 % 25 == 0 && this->timer / 1000 != 0 && !this->spawnMur)
+    if ((this->timer / 1000 - time / 1000) % 25 == 0 && (this->timer / 1000 - time / 1000) != 0 && !this->spawnMur && !this->mode1)
     {
 
         int temp = rand() % 2;
@@ -405,16 +414,16 @@ void map::addObstacle(SDL_Renderer *rend)
             break;
         }
     }
-    if (this->timer / 1000 % 25 != 0)
+    if ((this->timer / 1000 - time / 1000) % 25 != 0)
     {
         this->spawnMur = false;
     }
-    if (this->timer / 1000 % this->spawnRate != 0 && this->timer / 1000 % 2 != 0 && this->spawn == false)
+    if ((this->timer / 1000 - time / 1000) % this->spawnRate != 0 && (this->timer / 1000 - time / 1000) % 2 != 0 && this->spawn == false)
     {
         this->spawn = true;
     }
 
-    if (this->timer / 1000 % 2 == 0 && this->spawn)
+    if ((this->timer / 1000 - time / 1000) % 2 == 0 && this->spawn)
     {
         this->spawn = false;
 
@@ -455,9 +464,10 @@ void map::moveObstacle()
     {
 
         this->nu[i].hitbox.x -= this->vx;
-
+        cout << this->nu[i].hitbox.x << endl;
         if (this->nu[i].hitbox.x < -150)
         {
+            cout << 1;
             sup_case(i, this->indiceNuage, NULL, NULL, this->nu, NULL);
             indiceNuage -= 1;
         }
@@ -531,21 +541,21 @@ void map::show(SDL_Renderer *rend)
     SDL_RenderFillRect(rend, &this->sol);
 }
 
-void map::ActuVitesse()
+void map::ActuVitesse(int time)
 {
     this->timer = SDL_GetTicks();
-    if (this->timer / 1000 == 60)
+    if ((this->timer / 1000 - time / 1000) == 60)
     {
         this->vx = 5;
         this->spawnRate = 2;
         cout << "1min" << endl;
         this->increaseSpeed = false;
     }
-    else if (this->timer / 1000 % 60 == 0 && this->timer / 1000 != 0 && this->increaseSpeed)
+    else if ((this->timer / 1000 - time / 1000) % 60 == 0 && (this->timer / 1000 - time / 1000) != 0 && this->increaseSpeed)
     {
         this->increaseSpeed = false;
 
-        this->vx = 5 + (timer / 1000) / 60 - 1;
+        this->vx = 5 + (timer / 1000 - time / 1000) / 60 - 1;
         cout << vx << endl;
     }
     else

@@ -10,9 +10,12 @@ using namespace std;
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_video.h"
 #include "dino.cpp"
+#include "showScore.cpp"
 
 void playGame(bool &choix, bool &musique);
 void settings(bool &choix, bool &musique);
+
+void score(bool &choix, bool &musique);
 
 void menu(bool &choix, bool &musique)
 {
@@ -166,12 +169,14 @@ void menu(bool &choix, bool &musique)
                     SDL_Quit();
                     settings(choix, musique);
                 }
-
-                SDL_Rect bouton_settings;
-                bouton_settings.h = 75;
-                bouton_settings.w = 200;
-                bouton_settings.x = 250;
-                bouton_settings.y = 380;
+                else if (mouseX >= 250 && mouseX <= 450 && mouseY >= 300 && mouseY <= 375)
+                {
+                    stop = true;
+                    SDL_DestroyRenderer(rend);
+                    SDL_DestroyWindow(win);
+                    SDL_Quit();
+                    score(choix, musique);
+                }
             }
         }
 
@@ -231,8 +236,24 @@ void playGame(bool &choix, bool &musique)
 
     SDL_Rect t_score;
 
+    bool writeScore = true;
+
     while (!stop)
     {
+        if (start && !writeScore)
+        {
+            if (verifierEtCreerFichier("../file/score.txt"))
+            {
+                writeScore = true;
+
+                ecrireDansFichier("../file/score.txt", to_string(m.getScore()).c_str());
+            }
+            else
+            {
+                cout << 1;
+            }
+        }
+
         while (SDL_PollEvent(&event))
         {
 
@@ -266,6 +287,7 @@ void playGame(bool &choix, bool &musique)
                         m = tempMap;
                         restart = false;
                         start = false;
+                        writeScore = false;
                     }
                     else if (mouseX >= 400 && mouseX <= 600 && mouseY >= 325 && mouseY <= 375)
                     {
@@ -306,6 +328,10 @@ void playGame(bool &choix, bool &musique)
             {
                 restart = true;
             }
+            if (writeScore)
+            {
+                writeScore = false;
+            }
             SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 
             SDL_RenderClear(rend);
@@ -320,13 +346,13 @@ void playGame(bool &choix, bool &musique)
 
             d.Gravity();
 
-            m.addObstacle(rend);
+            m.addObstacle(rend, time);
 
             m.moveObstacle();
 
             m.chooseClip();
 
-            m.ActuVitesse();
+            m.ActuVitesse(time);
             m.actuScore(rend, time, text, pTextureTxtScore, t_score, dogica, noir);
 
             d.collision(m, start);
@@ -448,6 +474,168 @@ void settings(bool &choix, bool &musique)
 
         actuButtonMode(rend, pTextureTxtMode, t_mode, dogica, blanc, choix);
         actuButtonMusic(rend, pTextureTxtMusic, t_music, dogica, blanc, musique);
+
+        while (SDL_PollEvent(&event))
+        {
+
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                // Quit
+                stop = true;
+
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mouseX = event.button.x;
+                mouseY = event.button.y;
+
+                if (mouseX >= 50 && mouseX <= 250 && mouseY >= 400 && mouseY <= 475)
+                {
+                    stop = true;
+                }
+                else if (mouseX >= 190 && mouseX <= 600 && mouseY >= 150 && mouseY <= 225)
+                {
+
+                    if (choix)
+                    {
+                        choix = false;
+                    }
+                    else
+                    {
+                        choix = true;
+                    }
+                }
+                else if (mouseX >= 190 && mouseX <= 420 && mouseY >= 250 && mouseY <= 325)
+                {
+
+                    if (musique)
+                    {
+                        musique = false;
+                    }
+                    else
+                    {
+                        musique = true;
+                    }
+                }
+            }
+        }
+
+        SDL_RenderPresent(rend);
+        SDL_Delay(1000 / 60);
+    }
+    SDL_DestroyRenderer(rend);
+    SDL_DestroyWindow(win);
+
+    SDL_Quit();
+    menu(choix, musique);
+}
+
+void score(bool &choix, bool &musique)
+{
+
+    srand(time(NULL));
+    // Initialisation
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    {
+        printf("Erreur lors de l'initialisation de SDL: %s\n", SDL_GetError());
+    }
+    if (TTF_Init() == -1)
+    {
+        printf("TTF_Init: %s\n", TTF_GetError());
+    }
+
+    // Initialisation window
+
+    SDL_Window *win = SDL_CreateWindow("DINO RUNNER", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 700, 500, 0);
+    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
+    SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
+
+    bool stop = false;
+
+    int mouseX;
+    int mouseY;
+
+    SDL_Color blanc = {255, 255, 255};
+    TTF_Font *dogica = TTF_OpenFont("font/dogica.ttf", 16);
+    if (dogica == NULL)
+    {
+        fprintf(stderr, "Impossible de charger \"dogica.ttf\"");
+        exit(EXIT_FAILURE);
+    }
+
+    SDL_Surface *texte_score = TTF_RenderText_Blended(dogica, "SCORE", blanc);
+    SDL_Surface *texte_back = TTF_RenderText_Blended(dogica, "BACK", blanc);
+    SDL_Surface *texte_highscore = TTF_RenderText_Blended(dogica, "HIGHSCORE :", blanc);
+    SDL_Surface *texte_lastPlay = TTF_RenderText_Blended(dogica, "LAST 10 GAME :", blanc);
+
+    int txtW = 0;
+    int txtH = 0;
+
+    SDL_Texture *pTextureTxtScore = SDL_CreateTextureFromSurface(rend, texte_score);
+    SDL_Texture *pTextureTxtBack = SDL_CreateTextureFromSurface(rend, texte_back);
+    SDL_Texture *pTextureTxtHighScore = SDL_CreateTextureFromSurface(rend, texte_highscore);
+    SDL_Texture *pTextureTxtLastPlay = SDL_CreateTextureFromSurface(rend, texte_lastPlay);
+
+    SDL_FreeSurface(texte_score);
+    SDL_FreeSurface(texte_highscore);
+    SDL_FreeSurface(texte_back);
+    SDL_FreeSurface(texte_lastPlay);
+
+    SDL_QueryTexture(pTextureTxtScore, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_score;
+    t_score.x = 240;
+    t_score.y = 50;
+    t_score.w = txtW + 120;
+    t_score.h = txtH + 60;
+
+    SDL_QueryTexture(pTextureTxtHighScore, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_highscore;
+    t_highscore.x = 100;
+    t_highscore.y = 150;
+    t_highscore.w = txtW + 30;
+    t_highscore.h = txtH + 10;
+
+    SDL_QueryTexture(pTextureTxtBack, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_back;
+    t_back.h = txtH + 20;
+    t_back.w = txtW + 40;
+    t_back.x = 75;
+    t_back.y = 420;
+
+    SDL_QueryTexture(pTextureTxtLastPlay, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_lastPlay;
+    t_lastPlay.x = 350;
+    t_lastPlay.y = 150;
+    t_lastPlay.w = txtW + 30;
+    t_lastPlay.h = txtH + 10;
+
+    SDL_Rect retour;
+    retour.h = 75;
+    retour.w = 150;
+    retour.x = 50;
+    retour.y = 400;
+
+    SDL_Event event;
+
+    vector<string> lignes = obtenirDernieresLignes("../file/score.txt", 10);
+    while (!stop)
+
+    {
+
+        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+
+        SDL_RenderClear(rend);
+
+        showScore(rend, lignes, dogica, blanc);
+
+        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+        SDL_RenderDrawRect(rend, &retour);
+
+        SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
+        SDL_RenderCopy(rend, pTextureTxtBack, nullptr, &t_back);
+        SDL_RenderCopy(rend, pTextureTxtHighScore, nullptr, &t_highscore);
+        SDL_RenderCopy(rend, pTextureTxtLastPlay, nullptr, &t_lastPlay);
 
         while (SDL_PollEvent(&event))
         {

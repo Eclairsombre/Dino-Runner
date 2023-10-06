@@ -1,13 +1,14 @@
 #include "dino.h"
 #include "SDL2/SDL_image.h"
+#include "fileCreateWrite.cpp"
 
 bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)
 {
     // Vérifie si les rectangles se chevauchent en utilisant les coordonnées de leurs coins.
-    if (rectA.x + rectA.w >= rectB.x && // Coin droit de A est à droite de B
-        rectA.x <= rectB.x + rectB.w && // Coin gauche de A est à gauche de B
-        rectA.y + rectA.h >= rectB.y && // Coin bas de A est en dessous de B
-        rectA.y <= rectB.y + rectB.h)   // Coin haut de A est au-dessus de B
+    if (rectA.x + rectA.w - 15 >= rectB.x && // Coin droit de A est à droite de B
+        rectA.x <= rectB.x + rectB.w - 15 && // Coin gauche de A est à gauche de B
+        rectA.y + rectA.h - 10 >= rectB.y && // Coin bas de A est en dessous de B
+        rectA.y <= rectB.y + rectB.h)        // Coin haut de A est au-dessus de B
     {
         // Les rectangles se chevauchent
         return true;
@@ -208,8 +209,9 @@ void dino::moveDino(SDL_Event &event, map &m, bool &stop)
         {
         case SDL_QUIT:
             // Quit
+
             stop = true;
-            // m.setClose();
+
             break;
         case SDL_KEYDOWN:
             switch (event.key.keysym.scancode)
@@ -400,6 +402,14 @@ void dino::collision(map &m, bool &close)
     for (int i = 0; i < m.getIndiceOiseau(); i++)
     {
         if (checkCollision(this->hitbox, m.getOiseau()[i].hitbox))
+        {
+
+            close = true;
+        }
+    }
+    for (int i = 0; i < m.getIndiceDoubleCactus(); i++)
+    {
+        if (checkCollision(this->hitbox, m.getDoubleCactus()[i].hitbox))
         {
 
             close = true;
