@@ -464,7 +464,7 @@ void map::moveObstacle()
     {
 
         this->nu[i].hitbox.x -= this->vx;
-        cout << this->nu[i].hitbox.x << endl;
+
         if (this->nu[i].hitbox.x < -150)
         {
             cout << 1;
@@ -480,7 +480,7 @@ void map::moveObstacle()
         if (this->douCac[i].hitbox.x < -150)
         {
             sup_case(i, this->indiceCactusDouble, NULL, NULL, NULL, this->douCac);
-            indiceNuage -= 1;
+            indiceCactusDouble -= 1;
         }
     }
     if (this->mUp || this->mDown)
