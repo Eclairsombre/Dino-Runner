@@ -1,5 +1,5 @@
 // Include
-#include "start.cpp"
+#include "start.h"
 
 int main()
 {
