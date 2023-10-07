@@ -15,7 +15,10 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
     Download with: 
     ```sudo apt-get install libsdl2-dev```
     
+4. Dogica font.
 
+    You can download it directly from the font folder or at https://www.dafont.com/dogica.font .
+    
 
 
 
@@ -35,6 +38,7 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
 1. Normal Mode
 
 ![modeNormal](https://github.com/Eclairsombre/dino-google-game/assets/130174141/517fd589-58eb-44b1-accf-0a172d854a90)
-2. Reverse Mode
-   
 
+2. Reverse Mode
+
+![modeInverse](https://github.com/Eclairsombre/dino-google-game/assets/130174141/c96747f6-1a63-40fc-a210-9eb558510a7b)
