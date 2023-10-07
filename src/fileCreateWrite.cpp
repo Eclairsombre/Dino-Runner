@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-bool verifierEtCreerFichier(const char *nomFichier)
+bool checkAndCreateFile(const char *nomFichier)
 {
     std::ifstream file(nomFichier);
     if (file.good())
@@ -25,7 +25,7 @@ bool verifierEtCreerFichier(const char *nomFichier)
         }
     }
 }
-bool ecrireDansFichier(const char *nomFichier, const char *texte)
+bool writeInFile(const char *nomFichier, const char *texte)
 {
     std::ofstream fichier(nomFichier, std::ios_base::app); // Mode "ajout"
 

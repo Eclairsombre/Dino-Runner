@@ -1,5 +1,5 @@
 
-
+// Include
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
@@ -14,7 +14,6 @@ using namespace std;
 
 void playGame(bool &choix, bool &musique);
 void settings(bool &choix, bool &musique);
-
 void score(bool &choix, bool &musique);
 
 void menu(bool &choix, bool &musique)
@@ -43,6 +42,7 @@ void menu(bool &choix, bool &musique)
     int mouseY;
 
     SDL_Color blanc = {255, 255, 255};
+    SDL_Color noir = {0, 0, 0};
     TTF_Font *dogica = TTF_OpenFont("font/dogica.ttf", 16);
     if (dogica == NULL)
     {
@@ -68,15 +68,21 @@ void menu(bool &choix, bool &musique)
     bouton_settings.y = 380;
 
     SDL_Surface *texte_play = TTF_RenderText_Blended(dogica, "PLAY", blanc);
-    SDL_Surface *texte_tetris = TTF_RenderText_Blended(dogica, "TETRIS", blanc);
+    SDL_Surface *texte_dino = TTF_RenderText_Blended(dogica, "DINO RUNNER", noir);
     SDL_Surface *texte_score = TTF_RenderText_Blended(dogica, "SCORE", blanc);
     SDL_Surface *texte_settings = TTF_RenderText_Blended(dogica, "SETTINGS", blanc);
     int txtW = 0;
     int txtH = 0;
     SDL_Texture *pTextureTxtPlay = SDL_CreateTextureFromSurface(rend, texte_play);
-    SDL_Texture *pTextureTxtTetris = SDL_CreateTextureFromSurface(rend, texte_tetris);
+    SDL_Texture *pTextureTxtDino = SDL_CreateTextureFromSurface(rend, texte_dino);
     SDL_Texture *pTextureTxtScore = SDL_CreateTextureFromSurface(rend, texte_score);
     SDL_Texture *pTextureTxtSettings = SDL_CreateTextureFromSurface(rend, texte_settings);
+
+    SDL_FreeSurface(texte_dino);
+    SDL_FreeSurface(texte_play);
+    SDL_FreeSurface(texte_score);
+    SDL_FreeSurface(texte_settings);
+
     SDL_QueryTexture(pTextureTxtPlay, NULL, NULL, &txtW, &txtH);
     SDL_Rect t_play;
     t_play.x = 290;
@@ -95,17 +101,47 @@ void menu(bool &choix, bool &musique)
     t_settings.y = 400;
     t_settings.w = txtW + 60;
     t_settings.h = txtH + 20;
+    SDL_QueryTexture(pTextureTxtDino, NULL, NULL, &txtW, &txtH);
+    SDL_Rect t_dino;
+    t_dino.x = 180;
+    t_dino.y = 25;
+    t_dino.w = txtW + 200;
+    t_dino.h = txtH + 30;
+
+    SDL_Rect ligneDino;
+    ligneDino.x = 180;
+    ligneDino.y = 75;
+    ligneDino.w = txtW + 190;
+    ligneDino.h = 5;
 
     SDL_Event event;
+
+    SDL_Rect arrierePlan;
+    arrierePlan.x = 0;
+    arrierePlan.y = 0;
+    arrierePlan.h = 200;
+    arrierePlan.w = 700;
+
+    dino d(rend);
+    SDL_Rect hitbox;
+    hitbox.x = 100;
+    hitbox.y = 122;
+    hitbox.h = 80;
+    hitbox.w = 60;
+    d.setHitbox(hitbox);
+    d.animationDino();
+
     while (!stop)
 
     {
+        d.animationDino();
 
         SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 
         SDL_RenderClear(rend);
 
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+        SDL_RenderFillRect(rend, &arrierePlan);
         SDL_RenderDrawRect(rend, &bouton_play);
 
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
@@ -118,6 +154,11 @@ void menu(bool &choix, bool &musique)
 
         SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
         SDL_RenderCopy(rend, pTextureTxtSettings, nullptr, &t_settings);
+
+        SDL_RenderCopy(rend, pTextureTxtDino, nullptr, &t_dino);
+
+        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+        SDL_RenderFillRect(rend, &ligneDino);
 
         while (SDL_PollEvent(&event))
         {
@@ -138,17 +179,6 @@ void menu(bool &choix, bool &musique)
                     SDL_DestroyWindow(win);
                     SDL_Quit();
                     playGame(choix, musique);
-
-                case SDL_SCANCODE_LEFT:
-                    cout << choix << endl;
-                    if (choix)
-                    {
-                        choix = false;
-                    }
-                    else
-                    {
-                        choix = true;
-                    }
                 }
             case SDL_MOUSEBUTTONDOWN:
                 mouseX = event.button.x;
@@ -179,6 +209,7 @@ void menu(bool &choix, bool &musique)
                 }
             }
         }
+        d.show(rend);
 
         SDL_RenderPresent(rend);
         SDL_Delay(1000 / 60);
@@ -214,13 +245,13 @@ void playGame(bool &choix, bool &musique)
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
     dino d(rend);
-
     map m(rend, choix);
 
     bool stop = false, start = true, restart = false;
     int time = 0;
     int mouseX;
     int mouseY;
+
     SDL_Event event;
 
     SDL_Color noir = {0, 0, 0}, blanc = {255, 255, 255};
@@ -242,15 +273,11 @@ void playGame(bool &choix, bool &musique)
     {
         if (start && !writeScore)
         {
-            if (verifierEtCreerFichier("../file/score.txt"))
+            if (checkAndCreateFile("./file/score.txt"))
             {
                 writeScore = true;
 
-                ecrireDansFichier("../file/score.txt", to_string(m.getScore()).c_str());
-            }
-            else
-            {
-                cout << 1;
+                writeInFile("./file/score.txt", to_string(m.getScore()).c_str());
             }
         }
 
@@ -283,8 +310,8 @@ void playGame(bool &choix, bool &musique)
                         d = tempDino;
 
                         map tempMap(rend, choix);
-
                         m = tempMap;
+
                         restart = false;
                         start = false;
                         writeScore = false;
@@ -301,7 +328,7 @@ void playGame(bool &choix, bool &musique)
 
         SDL_RenderClear(rend);
 
-        d.chooseClip();
+        d.animationDino();
         if (!restart)
         {
             m.showKey(rend, dogica, noir, choix);
@@ -314,7 +341,7 @@ void playGame(bool &choix, bool &musique)
         if (restart)
 
         {
-            m.restartWindows(rend, dogica, blanc);
+            m.restartWindow(rend, dogica, blanc);
         }
 
         SDL_RenderPresent(rend);
@@ -336,21 +363,21 @@ void playGame(bool &choix, bool &musique)
 
             SDL_RenderClear(rend);
 
-            d.chooseClip();
+            d.animationDino();
 
             d.show(rend);
 
             m.show(rend);
 
-            d.moveDino(event, m, start);
+            d.dinoEvent(event, m, start);
 
             d.Gravity();
 
             m.addObstacle(rend, time);
 
-            m.moveObstacle();
+            m.UpdateObstacle();
 
-            m.chooseClip();
+            m.OiseauAnimation();
 
             m.ActuVitesse(time);
             m.actuScore(rend, time, text, pTextureTxtScore, t_score, dogica, noir);
@@ -618,7 +645,7 @@ void score(bool &choix, bool &musique)
 
     SDL_Event event;
 
-    vector<string> lignes = obtenirDernieresLignes("../file/score.txt", 10);
+    vector<string> lignes = CatchLastLignes("./file/score.txt", 10);
     while (!stop)
 
     {

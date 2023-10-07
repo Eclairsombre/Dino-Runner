@@ -2,21 +2,23 @@
 #include "SDL2/SDL_image.h"
 #include "fileCreateWrite.cpp"
 
+// Check Collision between 2 rect
 bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)
 {
-    // Vérifie si les rectangles se chevauchent en utilisant les coordonnées de leurs coins.
-    if (rectA.x + rectA.w - 15 >= rectB.x && // Coin droit de A est à droite de B
-        rectA.x <= rectB.x + rectB.w - 15 && // Coin gauche de A est à gauche de B
-        rectA.y + rectA.h - 10 >= rectB.y && // Coin bas de A est en dessous de B
-        rectA.y <= rectB.y + rectB.h)        // Coin haut de A est au-dessus de B
+
+    if (rectA.x + rectA.w - 15 >= rectB.x &&
+        rectA.x <= rectB.x + rectB.w - 15 &&
+        rectA.y + rectA.h - 10 >= rectB.y &&
+        rectA.y <= rectB.y + rectB.h)
     {
-        // Les rectangles se chevauchent
+
         return true;
     }
-    // Aucune collision
+
     return false;
 }
 
+// Set clip for animation
 void dino::set_clips(SDL_Renderer *rend)
 {
 
@@ -27,7 +29,7 @@ void dino::set_clips(SDL_Renderer *rend)
     imageSurface = IMG_Load("./picture/spriteDinoInverse.png");
     this->imageTextureInverse = SDL_CreateTextureFromSurface(rend, imageSurface);
     SDL_FreeSurface(imageSurface);
-    // On coupe la feuille de sprite
+
     for (int i = 0; i < 5; i++)
     {
         this->clips[i].x = 88 * i;
@@ -63,6 +65,8 @@ void dino::set_clips(SDL_Renderer *rend)
     this->clips[6].w = 172;
     this->clips[6].h = 87;
 }
+
+// dino constructor
 dino::dino(SDL_Renderer *rend)
 {
     SDL_Rect a = {
@@ -73,19 +77,27 @@ dino::dino(SDL_Renderer *rend)
     this->hitbox = a;
     this->set_clips(rend);
 }
+// dino destructor
 dino::~dino()
 {
 }
 
+// Get functions
 SDL_Rect dino::getHitbox()
 {
     return this->hitbox;
 }
 
+// Set functions
+void dino::setHitbox(SDL_Rect h)
+{
+    this->hitbox = h;
+}
+
+// Show dino
 void dino::show(SDL_Renderer *rend)
 {
 
-    SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
     if (this->hitbox.y <= 460)
     {
         SDL_RenderCopy(rend, this->imageTexture, &this->currentClip, &this->hitbox);
@@ -94,10 +106,10 @@ void dino::show(SDL_Renderer *rend)
     {
         SDL_RenderCopy(rend, this->imageTextureInverse, &this->currentClip, &this->hitbox);
     }
-    // SDL_RenderFillRect(rend, &this->hitbox);}
 }
 
-void dino::chooseClip()
+// Dino animation
+void dino::animationDino()
 {
 
     if (this->hitbox.y <= 460)
@@ -199,7 +211,8 @@ void dino::chooseClip()
     }
 }
 
-void dino::moveDino(SDL_Event &event, map &m, bool &stop)
+// Dino event
+void dino::dinoEvent(SDL_Event &event, map &m, bool &stop)
 {
 
     while (SDL_PollEvent(&event))
@@ -220,7 +233,7 @@ void dino::moveDino(SDL_Event &event, map &m, bool &stop)
                 if (!m.getMode())
                 {
                     this->up = true;
-                    this->changeSens();
+                    this->reverse();
                 }
                 break;
             case SDL_SCANCODE_DOWN:
@@ -267,6 +280,8 @@ void dino::moveDino(SDL_Event &event, map &m, bool &stop)
         }
     }
 }
+
+// Apply gravity on dino for jump
 void dino::Gravity()
 {
 
@@ -324,7 +339,8 @@ void dino::Gravity()
     }
 }
 
-void dino::changeSens()
+// Reverse dino position for Reverse mode
+void dino::reverse()
 {
     if (!this->down)
     {
@@ -344,6 +360,7 @@ void dino::changeSens()
     }
 }
 
+// Sneak dino to pass obtacles
 void dino::sneak()
 {
     if (!this->jump)
@@ -353,7 +370,7 @@ void dino::sneak()
 
             if (this->down && this->goSneak)
             {
-                this->chooseClip();
+                this->animationDino();
 
                 this->goSneak = false;
                 this->hitbox.h = 40;
@@ -362,7 +379,7 @@ void dino::sneak()
             }
             else if (!this->down && !this->goSneak)
             {
-                this->chooseClip();
+                this->animationDino();
                 this->goSneak = true;
                 this->hitbox.h = 80;
                 this->hitbox.w = 60;
@@ -374,14 +391,14 @@ void dino::sneak()
 
             if (this->down && this->goSneak)
             {
-                this->chooseClip();
+                this->animationDino();
 
                 this->goSneak = false;
                 this->hitbox.h = 40;
             }
             else if (!this->down && !this->goSneak)
             {
-                this->chooseClip();
+                this->animationDino();
                 this->goSneak = true;
                 this->hitbox.h = 80;
             }
@@ -389,6 +406,7 @@ void dino::sneak()
     }
 }
 
+// Check collision between dino and obstacles
 void dino::collision(map &m, bool &close)
 {
     for (int i = 0; i < m.getIndiceCactus(); i++)

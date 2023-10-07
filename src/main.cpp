@@ -1,5 +1,5 @@
 // Include
-#include "menu-play-settings-stats.cpp"
+#include "start.cpp"
 
 int main()
 {

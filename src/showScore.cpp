@@ -5,9 +5,10 @@ using namespace std;
 #include "SDL2/SDL.h"
 #include <SDL2/SDL_ttf.h>
 #include <vector>
-int trouverPlusGrandNombre(const char *nomFichier)
+
+int findMaxNumber(const char *nomFichier)
 {
-    std::ifstream fichier("../file/score.txt");
+    std::ifstream fichier("./file/score.txt");
     int plusGrandNombre = 0;
 
     if (fichier.is_open())
@@ -15,38 +16,32 @@ int trouverPlusGrandNombre(const char *nomFichier)
         std::string ligne;
         while (std::getline(fichier, ligne))
         {
-            try
+
+            int nombre = std::stoi(ligne);
+            if (nombre > plusGrandNombre)
             {
-                int nombre = std::stoi(ligne);
-                if (nombre > plusGrandNombre)
-                {
-                    plusGrandNombre = nombre;
-                }
-            }
-            catch (const std::invalid_argument &e)
-            {
-                std::cerr << "Erreur de conversion : " << e.what() << std::endl;
+                plusGrandNombre = nombre;
             }
         }
         fichier.close();
     }
     else
     {
-        std::cerr << "Erreur lors de l'ouverture du fichier." << std::endl;
+        cout << "Open File error." << endl;
     }
 
     return plusGrandNombre;
 }
 
-std::vector<std::string> obtenirDernieresLignes(const char *nomFichier, int nombreLignes)
+vector<string> CatchLastLignes(const char *nomFichier, int nombreLignes)
 {
-    std::ifstream fichier(nomFichier);
-    std::vector<std::string> lignes;
-    std::string ligne;
+    ifstream fichier(nomFichier);
+    vector<string> lignes;
+    string ligne;
 
     if (fichier.is_open())
     {
-        while (std::getline(fichier, ligne))
+        while (getline(fichier, ligne))
         {
             lignes.push_back(ligne);
             if (lignes.size() > nombreLignes)
@@ -58,7 +53,7 @@ std::vector<std::string> obtenirDernieresLignes(const char *nomFichier, int nomb
     }
     else
     {
-        std::cerr << "Erreur lors de l'ouverture du fichier." << std::endl;
+        cout << "Open File error." << endl;
     }
 
     return lignes;
@@ -66,7 +61,7 @@ std::vector<std::string> obtenirDernieresLignes(const char *nomFichier, int nomb
 void showScore(SDL_Renderer *rend, vector<string> lignes, TTF_Font *dogica, SDL_Color blanc)
 {
 
-    int highscore = trouverPlusGrandNombre("../file/score.txt");
+    int highscore = findMaxNumber("./file/score.txt");
     int txtW = 0;
     int txtH = 0;
     const char *score = to_string(highscore).c_str();

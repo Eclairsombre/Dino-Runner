@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include "SDL2/SDL_image.h"
+
+// Class for obstacles
 class oiseau
 {
 public:
@@ -18,6 +20,7 @@ class nuage
 {
 public:
     SDL_Rect hitbox, clipActuel;
+    bool inverse = false;
 
     void set_clips();
 };
@@ -40,6 +43,7 @@ public:
     void set_clipsDoubleCactus();
 };
 
+// Main class
 class map
 {
 private:
@@ -62,10 +66,10 @@ public:
     void setClose();
     void show(SDL_Renderer *rend);
     void addObstacle(SDL_Renderer *rend, int time);
-    void moveObstacle();
+    void UpdateObstacle();
     bool getSpawnMur();
     SDL_Rect getMur();
-    void chooseClip();
+    void OiseauAnimation();
     int getIndiceOiseau();
     int getIndiceCactus();
     int getIndiceDoubleCactus();
@@ -78,7 +82,7 @@ public:
     void actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTextureTxtScore, SDL_Rect t_score, TTF_Font *dogica, SDL_Color blanc);
     int getScore();
     void showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir, bool &choix);
-    void restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc);
+    void restartWindow(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc);
 };
 
 #endif

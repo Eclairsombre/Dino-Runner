@@ -4,7 +4,7 @@
 #include "SDL2/SDL_image.h"
 using namespace std;
 
-void sup_case(int i, int &indice, cactus cac[500], oiseau oi[500], nuage nu[500], doubleCactus douCac[500])
+void supCaseTab(int i, int &indice, cactus cac[500], oiseau oi[500], nuage nu[500], doubleCactus douCac[500])
 {
 
     if (cac != NULL)
@@ -37,6 +37,7 @@ void sup_case(int i, int &indice, cactus cac[500], oiseau oi[500], nuage nu[500]
     }
 }
 
+// Set clips for obstacles
 void oiseau::set_clips()
 {
 
@@ -60,7 +61,7 @@ void oiseau::set_clips()
     {
         this->hitbox.h = 60;
         this->hitbox.w = 60;
-        this->hitbox.x = 1020;
+        this->hitbox.x = 1320;
         this->hitbox.y = 630;
     }
 
@@ -74,11 +75,20 @@ void nuage::set_clips()
     this->clipActuel.y = 0;
     this->clipActuel.w = 90;
     this->clipActuel.h = 30;
-
-    this->hitbox.h = 30;
-    this->hitbox.w = 90;
-    this->hitbox.x = 1100;
-    this->hitbox.y = 60 + rand() % 200;
+    if (!inverse)
+    {
+        this->hitbox.h = 30;
+        this->hitbox.w = 90;
+        this->hitbox.x = 1100;
+        this->hitbox.y = 60 + rand() % 200;
+    }
+    else
+    {
+        this->hitbox.h = 30;
+        this->hitbox.w = 90;
+        this->hitbox.x = 1100;
+        this->hitbox.y = 900 - rand() % 200;
+    }
 }
 
 void cactus::set_clipsCactus()
@@ -113,7 +123,7 @@ void cactus::set_clipsCactus()
 
         this->hitbox.h = 60;
         this->hitbox.w = 20;
-        this->hitbox.x = 1020;
+        this->hitbox.x = 1320;
         this->hitbox.y = 550;
 
         int nb = rand() % 5;
@@ -167,7 +177,7 @@ void doubleCactus::set_clipsDoubleCactus()
 
         this->hitbox.h = 60;
         this->hitbox.w = 50;
-        this->hitbox.x = 1020;
+        this->hitbox.x = 1320;
         this->hitbox.y = 550;
 
         int nb = rand() % 3;
@@ -175,6 +185,7 @@ void doubleCactus::set_clipsDoubleCactus()
     }
 }
 
+// Map constructor
 map::map(SDL_Renderer *rend, bool choix)
 {
     SDL_Rect s;
@@ -223,7 +234,13 @@ map::map(SDL_Renderer *rend, bool choix)
     SDL_FreeSurface(imageSurface);
 }
 
-void map::chooseClip()
+// Map destructor
+map::~map()
+{
+}
+
+// Animation
+void map::OiseauAnimation()
 {
     for (int i = 0; i < this->indiceOiseau; i++)
     {
@@ -248,10 +265,8 @@ void map::chooseClip()
         }
     }
 }
-map::~map()
-{
-}
 
+// Get functions
 bool map::getClose()
 {
     return this->close;
@@ -304,6 +319,7 @@ oiseau *map::getOiseau()
     return this->oi;
 }
 
+// Set functions
 void map::setMode(bool choix)
 {
 
@@ -314,6 +330,7 @@ void map::setClose()
     this->close = true;
 }
 
+// Add random obstacles
 void map::addObstacle(SDL_Renderer *rend, int time)
 {
     this->timer = SDL_GetTicks();
@@ -427,14 +444,18 @@ void map::addObstacle(SDL_Renderer *rend, int time)
     {
         this->spawn = false;
 
-        nuage n;
+        nuage n, n2;
         n.set_clips();
+        n2.inverse = true;
+        n2.set_clips();
         this->nu[this->indiceNuage] = n;
+        this->indiceNuage += 1;
+        this->nu[this->indiceNuage] = n2;
         this->indiceNuage += 1;
     }
 }
 
-void map::moveObstacle()
+void map::UpdateObstacle()
 {
 
     for (int i = 0; i < this->indiceCactus; i++)
@@ -444,7 +465,7 @@ void map::moveObstacle()
 
         if (this->cac[i].hitbox.x < -50)
         {
-            sup_case(i, this->indiceCactus, this->cac, NULL, NULL, NULL);
+            supCaseTab(i, this->indiceCactus, this->cac, NULL, NULL, NULL);
             indiceCactus -= 1;
         }
     }
@@ -456,7 +477,7 @@ void map::moveObstacle()
 
         if (this->oi[i].hitbox.x < -50)
         {
-            sup_case(i, this->indiceOiseau, NULL, this->oi, NULL, NULL);
+            supCaseTab(i, this->indiceOiseau, NULL, this->oi, NULL, NULL);
             indiceOiseau -= 1;
         }
     }
@@ -467,8 +488,8 @@ void map::moveObstacle()
 
         if (this->nu[i].hitbox.x < -150)
         {
-            cout << 1;
-            sup_case(i, this->indiceNuage, NULL, NULL, this->nu, NULL);
+
+            supCaseTab(i, this->indiceNuage, NULL, NULL, this->nu, NULL);
             indiceNuage -= 1;
         }
     }
@@ -479,7 +500,7 @@ void map::moveObstacle()
 
         if (this->douCac[i].hitbox.x < -150)
         {
-            sup_case(i, this->indiceCactusDouble, NULL, NULL, NULL, this->douCac);
+            supCaseTab(i, this->indiceCactusDouble, NULL, NULL, NULL, this->douCac);
             indiceCactusDouble -= 1;
         }
     }
@@ -495,12 +516,13 @@ void map::moveObstacle()
     }
 }
 
+// Show map and obstacles
 void map::show(SDL_Renderer *rend)
 {
 
     for (int i = 0; i < this->indiceCactus; i++)
     {
-        // SDL_RenderFillRect(rend, &this->cac[i].hitbox);
+
         if (!cac[i].inverse)
         {
             SDL_RenderCopy(rend, this->imageOiseau, &this->cac[i].clipActuel, &this->cac[i].hitbox);
@@ -541,6 +563,7 @@ void map::show(SDL_Renderer *rend)
     SDL_RenderFillRect(rend, &this->sol);
 }
 
+// Increase speed and spawn rate
 void map::ActuVitesse(int time)
 {
     this->timer = SDL_GetTicks();
@@ -548,7 +571,7 @@ void map::ActuVitesse(int time)
     {
         this->vx = 5;
         this->spawnRate = 2;
-        cout << "1min" << endl;
+
         this->increaseSpeed = false;
     }
     else if ((this->timer / 1000 - time / 1000) % 60 == 0 && (this->timer / 1000 - time / 1000) != 0 && this->increaseSpeed)
@@ -556,7 +579,6 @@ void map::ActuVitesse(int time)
         this->increaseSpeed = false;
 
         this->vx = 5 + (timer / 1000 - time / 1000) / 60 - 1;
-        cout << vx << endl;
     }
     else
     {
@@ -564,6 +586,7 @@ void map::ActuVitesse(int time)
     }
 }
 
+// Update Score while game play
 void map::actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTextureTxtScore, SDL_Rect t_score, TTF_Font *dogica, SDL_Color noir)
 {
     long timer = SDL_GetTicks();
@@ -589,6 +612,7 @@ void map::actuScore(SDL_Renderer *rend, int time, string text, SDL_Texture *pTex
     SDL_RenderCopy(rend, pTextureTxtScore, nullptr, &t_score);
 }
 
+// Show key at the start of the game
 void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir, bool &choix)
 {
     SDL_Surface *texte_space = TTF_RenderText_Blended(dogica, "SPACE", noir);
@@ -685,7 +709,8 @@ void map::showKey(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color noir, bool &ch
     SDL_RenderCopy(rend, pTextureTxtstart, nullptr, &t_start);
 }
 
-void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
+// Show restart window when you died
+void map::restartWindow(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
 {
     SDL_Rect carreRestart;
     carreRestart.x = 350;
@@ -754,6 +779,7 @@ void map::restartWindows(SDL_Renderer *rend, TTF_Font *dogica, SDL_Color blanc)
     SDL_RenderCopy(rend, pTextureTxtRestart, nullptr, &t_restart);
 }
 
+// Update Mode Button in settings
 void actuButtonMode(SDL_Renderer *rend, SDL_Texture *pTextureTxtMode, SDL_Rect t_mode, TTF_Font *dogica, SDL_Color blanc, bool &choix)
 {
     if (choix)
@@ -800,6 +826,7 @@ void actuButtonMode(SDL_Renderer *rend, SDL_Texture *pTextureTxtMode, SDL_Rect t
     }
 }
 
+// Update Music Button in settings
 void actuButtonMusic(SDL_Renderer *rend, SDL_Texture *pTextureTxtMusic, SDL_Rect t_music, TTF_Font *dogica, SDL_Color blanc, bool &musique)
 {
     if (musique)
