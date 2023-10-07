@@ -34,3 +34,5 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
 
 1. Normal Mode
    
+2. Reverse Mode
+   
