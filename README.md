@@ -13,7 +13,7 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
 3. SDL2 library.
 
     Download with: 
-    ```sudo apt install libsdl2-mixer-dev libsdl2-image-dev libsdl2-ttf-dev```
+    ```sudo apt install libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev libsdl2-ttf-dev```
     
 4. Dogica font.
 
