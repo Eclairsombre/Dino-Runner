@@ -62,7 +62,7 @@ void oiseau::set_clips()
         this->hitbox.h = 60;
         this->hitbox.w = 60;
         this->hitbox.x = 1320;
-        this->hitbox.y = 630;
+        this->hitbox.y = 620;
     }
 
     this->clipActuel = this->clip1;
