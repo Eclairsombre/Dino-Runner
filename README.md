@@ -36,10 +36,10 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
 ## III) Mode presentation
 
 1. Normal Mode
-2. 
+
 ![modeNormal](https://github.com/Eclairsombre/Dino-Runner/assets/130174141/752ea9e5-95bb-4a7b-8eb4-46f1e48bbfb3)
 
 3. Reverse Mode
-4. 
+   
 ![modeInverse](https://github.com/Eclairsombre/Dino-Runner/assets/130174141/68993d46-ec91-47e9-9d30-c5b822e957e0)
 
