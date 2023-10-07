@@ -246,7 +246,9 @@ void dino::dinoEvent(SDL_Event &event, map &m, bool &stop)
                 break;
             case SDL_SCANCODE_SPACE:
                 if (!this->down)
+
                 {
+
                     this->jump = true;
                 }
                 break;

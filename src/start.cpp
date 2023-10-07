@@ -244,6 +244,14 @@ void playGame(bool &choix, bool &musique)
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
+    if (musique)
+    {
+        Mix_Music *music;
+        music = Mix_LoadMUS("./music/song.mp3");
+        Mix_PlayMusic(music, -1);
+        Mix_VolumeMusic(5);
+    }
+
     dino d(rend);
     map m(rend, choix);
 
