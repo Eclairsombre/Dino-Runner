@@ -33,7 +33,7 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
 3. To play the game, type on your terminal : ```./bin/main```  
   
 
-## II) Mode presentation
+## III) Mode presentation
 
 1. Normal Mode
 
