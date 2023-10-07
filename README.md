@@ -26,7 +26,7 @@ A Runner game inspired by the Google Dino Game with a second Game mode.
 
 ## II) Download and compile  
 1. Open a terminal on the folder where you want to download the project and type : 
-   ```git clone https://github.com/Eclairsombre/dino-google-game.git```
+   ```git clone https://github.com/Eclairsombre/Dino-Runner.git```
 2. After that , when files are downloaded , type on your terminal  in the same folder: 
    ```make```   
      
