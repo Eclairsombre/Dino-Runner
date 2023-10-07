@@ -41,21 +41,22 @@ void supCaseTab(int i, int &indice, cactus cac[500], oiseau oi[500], nuage nu[50
 void oiseau::set_clips()
 {
 
-    this->clip1.x = 87;
-    this->clip1.y = 5;
-    this->clip1.w = 94;
-    this->clip1.h = 77;
-
-    this->clip2.x = 180;
-    this->clip2.y = 0;
-    this->clip2.w = 95;
-    this->clip2.h = 64;
     if (!inverse)
     {
         this->hitbox.h = 60;
         this->hitbox.w = 60;
         this->hitbox.x = 1020;
         this->hitbox.y = 370;
+
+        this->clip1.x = 87;
+        this->clip1.y = 5;
+        this->clip1.w = 94;
+        this->clip1.h = 77;
+
+        this->clip2.x = 180;
+        this->clip2.y = 0;
+        this->clip2.w = 95;
+        this->clip2.h = 64;
     }
     else
     {
@@ -63,6 +64,16 @@ void oiseau::set_clips()
         this->hitbox.w = 60;
         this->hitbox.x = 1320;
         this->hitbox.y = 620;
+
+        this->clip1.x = 87;
+        this->clip1.y = 25;
+        this->clip1.w = 93;
+        this->clip1.h = 80;
+
+        this->clip2.x = 180;
+        this->clip2.y = 25;
+        this->clip2.w = 94;
+        this->clip2.h = 82;
     }
 
     this->clipActuel = this->clip1;
@@ -71,16 +82,17 @@ void oiseau::set_clips()
 void nuage::set_clips()
 {
 
-    this->clipActuel.x = 0;
-    this->clipActuel.y = 0;
-    this->clipActuel.w = 90;
-    this->clipActuel.h = 30;
     if (!inverse)
     {
         this->hitbox.h = 30;
         this->hitbox.w = 90;
         this->hitbox.x = 1100;
         this->hitbox.y = 60 + rand() % 200;
+
+        this->clipActuel.x = 0;
+        this->clipActuel.y = 0;
+        this->clipActuel.w = 90;
+        this->clipActuel.h = 30;
     }
     else
     {
@@ -88,6 +100,11 @@ void nuage::set_clips()
         this->hitbox.w = 90;
         this->hitbox.x = 1100;
         this->hitbox.y = 900 - rand() % 200;
+
+        this->clipActuel.x = 0;
+        this->clipActuel.y = 75;
+        this->clipActuel.w = 90;
+        this->clipActuel.h = 30;
     }
 }
 
@@ -534,13 +551,25 @@ void map::show(SDL_Renderer *rend)
     }
     for (int i = 0; i < this->indiceOiseau; i++)
     {
-
-        SDL_RenderCopy(rend, this->imageOiseau, &this->oi[i].clipActuel, &this->oi[i].hitbox);
+        if (!oi[i].inverse)
+        {
+            SDL_RenderCopy(rend, this->imageOiseau, &this->oi[i].clipActuel, &this->oi[i].hitbox);
+        }
+        else
+        {
+            SDL_RenderCopy(rend, this->imageOiseauInverse, &this->oi[i].clipActuel, &this->oi[i].hitbox);
+        }
     }
     for (int i = 0; i < this->indiceNuage; i++)
     {
-
-        SDL_RenderCopy(rend, this->imageOiseau, &this->nu[i].clipActuel, &this->nu[i].hitbox);
+        if (!nu[i].inverse)
+        {
+            SDL_RenderCopy(rend, this->imageOiseau, &this->nu[i].clipActuel, &this->nu[i].hitbox);
+        }
+        else
+        {
+            SDL_RenderCopy(rend, this->imageOiseauInverse, &this->nu[i].clipActuel, &this->nu[i].hitbox);
+        }
     }
     for (int i = 0; i < this->indiceCactusDouble; i++)
     {
