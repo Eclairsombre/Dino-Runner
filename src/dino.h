@@ -2,7 +2,7 @@
 #define DINO
 
 #include <SDL2/SDL.h>
-#include "map.cpp"
+#include "map.h"
 
 class dino
 {

@@ -1,6 +1,6 @@
 #include "dino.h"
 #include "SDL2/SDL_image.h"
-#include "fileCreateWrite.cpp"
+#include "fileCreateWrite.h"
 
 // Check Collision between 2 rect
 bool checkCollision(SDL_Rect rectA, SDL_Rect rectB)

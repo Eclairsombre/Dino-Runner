@@ -9,12 +9,11 @@ using namespace std;
 #include <SDL2/SDL_mixer.h>
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_video.h"
-#include "dino.cpp"
-#include "showScore.cpp"
-
-void playGame(bool &choix, bool &musique);
-void settings(bool &choix, bool &musique);
-void score(bool &choix, bool &musique);
+#include "dino.h"
+#include "showScore.h"
+#include "start.h"
+#include "fileCreateWrite.h"
+#include "map.h"
 
 void menu(bool &choix, bool &musique)
 {
